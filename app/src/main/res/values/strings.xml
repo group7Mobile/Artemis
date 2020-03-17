@@ -1,0 +1,11 @@
+<resources>
+    <string name="home">Home</string>
+    <string name="app_name">Artemis</string>
+    <string name="sign_into_other_account">sign into other account</string>
+    <string name="email1">TextView</string>
+    <string name="phone1">TextView</string>
+    <string name="account">Account</string>
+    <string name="email">Email</string>
+    <string name="sign_out">Sign out</string>
+    <string name="phone">Phone</string>
+</resources>

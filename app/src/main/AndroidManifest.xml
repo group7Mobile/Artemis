@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.artemis">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application
+        android:usesCleartextTraffic="true"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher_artemis"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name="com.example.artemis.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.example.artemis.Account"/>
+        <activity android:name="com.example.artemis.About"/>
+        <activity android:name="com.example.artemis.Filters"/>
+        <activity android:name="com.example.artemis.AlertSettings"/>
+        <activity android:name="com.example.artemis.Privacy"/>
+        <activity android:name="com.example.artemis.PopUpBlocking"/>
+        <activity android:name="com.example.artemis.Passwords"/>
+        <activity android:name="com.example.artemis.Favourites"/>
+        <activity android:name="com.example.artemis.Background"/>
+        <activity android:name="com.example.artemis.Shortcuts"/>
+        <activity android:name="com.example.artemis.TimeTable"/>
+        <activity android:name="com.example.artemis.HomePageWidgets"/>
+        <activity android:name="com.example.artemis.HomePage"/>
+        <activity android:name="com.example.artemis.ScreenTime"/>
+        <activity android:name="com.example.artemis.BlackList"/>
+        <activity android:name="com.example.artemis.Settings"/>
+
+    </application>
+
+</manifest>
