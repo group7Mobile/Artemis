@@ -20,8 +20,8 @@ public class HPDatabaseHelper extends SQLiteOpenHelper {
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTable = "CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY, " +
-                COL1 + " INTEGER," +
+        String createTable = "CREATE TABLE " + TABLE_NAME + " (" +
+                COL1 + " INTEGER PRIMARY KEY," +
                 COL2 + " TEXT)";
         db.execSQL(createTable);
     }
