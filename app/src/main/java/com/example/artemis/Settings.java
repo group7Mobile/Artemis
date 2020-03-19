@@ -1,8 +1,6 @@
 package com.example.artemis;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.accounts.Account;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -86,7 +84,7 @@ public class Settings extends AppCompatActivity {
     }
 
     public void account(View v) {
-        Intent goAccount = new Intent(Settings.this, Account.class);
+        Intent goAccount = new Intent(Settings.this, AccountPage.class);
         startActivity(goAccount);
     }
     public void mainPage(View v) {

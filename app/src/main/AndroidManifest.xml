@@ -20,7 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.artemis.Account"/>
+        <activity android:name="com.example.artemis.AccountPage"/>
         <activity android:name="com.example.artemis.About"/>
         <activity android:name="com.example.artemis.Filters"/>
         <activity android:name="com.example.artemis.AlertSettings"/>
