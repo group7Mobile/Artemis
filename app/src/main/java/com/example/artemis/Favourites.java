@@ -10,23 +10,34 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 import com.google.gson.Gson;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Favourites extends AppCompatActivity {
     private ArrayList<String> arrayList;
     private ArrayAdapter<String> adapter;
-    private EditText txtInput;
+    private EditText urlInput;
+    private EditText titleInput;
     private SharedPreferences fav;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourites);
+
+        urlInput = (EditText) findViewById(R.id.editText3);
+        titleInput = (EditText) findViewById(R.id.editTextTitle);
         ListView listView = (ListView) findViewById(R.id.listView2);
-        String[] items = {"1","2","3"};
-        arrayList = new ArrayList<>(Arrays.asList(items));
+        arrayList = new ArrayList<>();
+
+        for (int i = 0; i < arrayList.size(); i++) {
+            String item = arrayList.get(i);
+            if (item.equals(urlInput.getText().toString())) {
+                arrayList.add(item);
+                adapter.notifyDataSetChanged();
+            }
+        }
+
         //constructor of adapter to store input item separately in list_item and put them in list_view
         adapter = new ArrayAdapter<String>(this,R.layout.list_item,R.id.txtitem,arrayList);
         listView.setAdapter(adapter);
@@ -34,31 +45,49 @@ public class Favourites extends AppCompatActivity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                txtInput = (EditText) findViewById(R.id.editText3);
-                String newItem = txtInput.getText().toString();
-                //every time add an item, add it in the top of stack by adding it to the 0 index of the arrayList
-                arrayList.add(0,newItem);
-                adapter.notifyDataSetChanged();
+                addFavourite();
             }
         });
-
         Button btnPop = (Button) findViewById(R.id.button24);
         btnPop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(arrayList.size()==0){
-                    return;
-                }
-
-                arrayList.remove(0);
-                adapter.notifyDataSetChanged();
+                removeFavourite();
             }
         });
-
+        //ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.activity_favourites,R.id.textView,arrayList);
     }
+
     public void mainPage(View v) {
         Intent goMainPage = new Intent(this, Settings.class);
         startActivity(goMainPage);
+    }
+
+    public void addFavourite() {
+        String newItem = urlInput.getText().toString();
+        String newItem2 = titleInput.getText().toString();
+        //every time add an item, add it in the top of stack by adding it to the 0 index of the arrayList
+        arrayList.add(newItem2);
+        addToFavourites(newItem, newItem2, false);
+        adapter.notifyDataSetChanged();
+    }
+
+    public void removeFavourite() {
+        if(arrayList.size()==0){
+            return;
+        }
+        for (int i = 0; i < arrayList.size(); i++) {
+            String item = arrayList.get(i);
+            if (item.equals(titleInput.getText().toString())) {
+                arrayList.remove(i);
+                adapter.notifyDataSetChanged();
+            } else {
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(this, "Please enter a number", duration);
+                toast.show();
+            }
+        }
+        removeFromFavourites(urlInput.getText().toString());
     }
 
     /*
@@ -69,7 +98,7 @@ public class Favourites extends AppCompatActivity {
         SharedPreferences fav = getApplicationContext().getSharedPreferences("GlobalPrefs", 0);
         //Retrieve ArrayList from preferences:
         Gson gson = new Gson();
-        //Check if blacklist has already been created:
+        //Check if favourites has already been created:
         ArrayList<Site> list;
         if (fav.contains("Favourites")) {
             String json = fav.getString("Favourites", "");
@@ -92,23 +121,27 @@ public class Favourites extends AppCompatActivity {
     /*
      * Removes a favourite from the list.
      */
-    public void removeFavourite(Site favId) {
+    public void removeFromFavourites(String url) {
         try {
             SharedPreferences fav = getApplicationContext().getSharedPreferences("GlobalPrefs", 0);
             //Retrieve ArrayList from preferences:
             Gson gson = new Gson();
             String json = fav.getString("Favourites", "");
             ArrayList<Site> list = gson.fromJson(json, ArrayList.class);
-
-            list.remove(favId);
-            //Add ArrayLit back to preferences:
+            for (int i = 0; i < list.size(); i++) {
+                Site item = list.get(i);
+                if (item.getUrl().equals(url)) {
+                    list.remove(i);
+                }
+            }
+            //Add ArrayList back to preferences:
             Gson gsonAdd = new Gson();
             String jsonAdd = gson.toJson(list);
             SharedPreferences.Editor editor = fav.edit();
             editor.putString("Favourites", json);
             editor.commit();
         } catch (Exception e) {
-            System.out.println("Site not in blacklist");
+            System.out.println("Site not in Favourites");
         }
     }
 }
