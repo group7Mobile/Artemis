@@ -10,7 +10,9 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -48,6 +50,17 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             home = savedInstanceState.getString(savedUrl);
         }
+        addressBar.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_GO) {
+                    go(null);
+                }
+                return false;
+            }
+        });
+
+
     }
 
     @Override
