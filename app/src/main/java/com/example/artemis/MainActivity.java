@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         favDialog.show(getSupportFragmentManager(), "fav dialog");
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void run() {
                 String tlt;
@@ -107,18 +108,21 @@ public class MainActivity extends AppCompatActivity {
                         hpDatabaseHelper.rePopulate(viewer.getUrl());
                         int repd = hpDatabaseHelper.rePopulate(viewer.getUrl());
                     } catch (Exception e) {
-                        hpDatabaseHelper.addData(1, viewer.getUrl());
-                        hpDatabaseHelper.addData(1, viewer.getUrl());
+                        hpDatabaseHelper.addData(viewer.getUrl());
+                        hpDatabaseHelper.addData(viewer.getUrl());
                     }
                 }
                 tlt = favDialog.getTitle();
                 boolean insert = favDatabaseHelper.addData(tlt, viewer.getUrl());
-
                 if (insert) {
                     Toast.makeText(getApplicationContext(), "Successfull", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "unSuccessfull", Toast.LENGTH_SHORT).show();
                 }
+                Intent intent = new Intent(MainActivity.this, Favourites.class);
+                intent.putExtra(Intent.EXTRA_TITLE, hdr.getText().toString());
+                intent.putExtra(Intent.EXTRA_PROCESS_TEXT, viewer.getUrl());
+                startActivity(intent);
                 Handler handler1 = new Handler();
                 handler1.postDelayed(new Runnable() {
                     @Override
