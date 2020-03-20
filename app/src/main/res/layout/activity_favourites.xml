@@ -97,7 +97,6 @@
         android:background="#FFFFFF"
         android:foregroundGravity="center"
         android:paddingVertical="4dp"
-        android:theme="@style/ListView"
         app:layout_constraintBottom_toTopOf="@+id/button24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
