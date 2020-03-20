@@ -24,45 +24,26 @@
 
     <Button
         android:id="@+id/button21"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="140dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginRight="24dp"
+        android:layout_marginEnd="48dp"
+        android:layout_marginRight="48dp"
         android:text="add"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/editText3"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editText3"
-        android:layout_width="186dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
         android:ems="10"
-        android:hint="Website url"
         android:inputType="textPersonName"
+        android:text="url  "
         app:layout_constraintBaseline_toBaselineOf="@+id/button21"
-        app:layout_constraintEnd_toStartOf="@+id/button21"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <EditText
-        android:id="@+id/editTextTitle"
-        android:layout_width="186dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginBottom="8dp"
-        android:ems="10"
-        android:hint="Title"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/editText3"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/button21" />
 
     <Button
         android:id="@+id/button24"
@@ -88,17 +69,9 @@
 
     <ListView
         android:id="@+id/listView2"
-        style="@style/Widget.AppCompat.ListView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
-        android:addStatesFromChildren="false"
-        android:background="#FFFFFF"
-        android:foregroundGravity="center"
-        android:paddingVertical="4dp"
-        android:theme="@style/ListView"
-        app:layout_constraintBottom_toTopOf="@+id/button24"
+        android:layout_width="407dp"
+        android:layout_height="394dp"
+        android:layout_marginTop="56dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText3" />
