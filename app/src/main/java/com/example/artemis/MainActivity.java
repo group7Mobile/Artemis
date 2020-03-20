@@ -105,10 +105,8 @@ public class MainActivity extends AppCompatActivity {
                 if (favDialog.isHp()) {
                     try {
                         hpDatabaseHelper.rePopulate(viewer.getUrl());
-                        int repd = hpDatabaseHelper.rePopulate(viewer.getUrl());
                     } catch (Exception e) {
-                        hpDatabaseHelper.addData(1, viewer.getUrl());
-                        hpDatabaseHelper.addData(1, viewer.getUrl());
+                        hpDatabaseHelper.addData(viewer.getUrl());
                     }
                 }
                 tlt = favDialog.getTitle();
@@ -187,15 +185,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void homeP(View v) {
-        if (hpDatabaseHelper.getHomePage().toString().equals("")) {
+        String homePage = hpDatabaseHelper.getHomePage();
+        if (homePage.equals("")) {
             try {
                 SharedPreferences getSavedHP;
                 getSavedHP = getSharedPreferences("SAVED_URL", Context.MODE_PRIVATE);
                 home = getSavedHP.getString("MEM-URL", "");
             } catch (Exception e) {
             }
+        } else {
+            home = homePage;
         }
-        home = filterUrl(home);
         viewer.loadUrl(home);
         xrossInvisible(null);
         Handler handler = new Handler();

@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 public class HPDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "HPDatabaseHelper";
@@ -50,20 +52,31 @@ public class HPDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getHomePage() {
+    public String getHomePage() {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT Url FROM " + TABLE_NAME;
-        Cursor data = db.rawQuery(query, null);
-        return data;
+        Cursor cursor = db.rawQuery(query, null);
+        ArrayList<String> strings= new ArrayList<>();
+        if (cursor.moveToFirst()){
+            do{
+                String data = cursor.getString(cursor.getColumnIndex("Url"));
+                strings.add(data);
+
+                // do what ever you want here
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        return strings.get(0);
     }
 
     public int rePopulate(String lk) {
         SQLiteDatabase db = this.getWritableDatabase();
         int res = 0;
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL1, 1);
         contentValues.put(COL2, lk);
-        long del = db.delete(TABLE_NAME, COL1 + "=" + 1, null);
+
+        String query = "delete FROM " + TABLE_NAME;
+        long del = db.rawQuery(query, null).getCount();
         long repl = db.insert(TABLE_NAME, null, contentValues);
         if (del > 0) {
             res++;
