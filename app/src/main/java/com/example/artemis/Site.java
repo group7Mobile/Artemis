@@ -6,7 +6,6 @@ package com.example.artemis;
 public class Site {
     private String title;
     private String url;
-    private boolean homepage;
 
     public Site(String title, String url) {
         this.title = title;
@@ -39,19 +38,5 @@ public class Site {
      */
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    /*
-     * Returns true if favourite is the homepage.
-     */
-    public boolean isHomepage() {
-        return homepage;
-    }
-
-    /*
-     * Sets whether favourite is the homepage.
-     */
-    public void setHomepage(boolean homepage) {
-        this.homepage = homepage;
     }
 }

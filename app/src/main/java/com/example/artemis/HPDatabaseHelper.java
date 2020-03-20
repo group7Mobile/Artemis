@@ -9,20 +9,20 @@ import android.util.Log;
 
 public class HPDatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String TAG1 = "FavDatabaseHelper";
-
+    private static final String DB_NAME = "HPDatabaseHelper";
+    private static final int DB_VERSION = 1;
     private static final String TABLE_NAME = "hp_table";
     private static final String COL1 = "ID";
     private static final String COL2 = "Url";
 
     public HPDatabaseHelper(Context context) {
-        super(context, TABLE_NAME, null, 1);
+        super(context, DB_NAME, null, DB_VERSION);
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
         String createTable = "CREATE TABLE " + TABLE_NAME + " (" +
-                COL1 + " INTEGER PRIMARY KEY," +
-                COL2 + " TEXT)";
+                COL1 + " INTEGER PRIMARY KEY, " +
+                COL2 + " TEXT);";
         db.execSQL(createTable);
     }
 
@@ -32,20 +32,20 @@ public class HPDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean addData(int id, String lk) {
+    public boolean addData(String lk) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL1, id);
         contentValues.put(COL2, lk);
 
-
-        Log.d(TAG1, "addData: Adding " + lk + " to " + TABLE_NAME);
+        Log.d(DB_NAME, "addData: Adding " + lk + " to " + TABLE_NAME);
 
         long result = db.insert(TABLE_NAME, null, contentValues);
 
         if (result == -1) {
+            db.close();
             return false;
         } else {
+            db.close();
             return true;
         }
     }
@@ -74,10 +74,9 @@ public class HPDatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public void del() {
+    public void del(String url) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String createTable = "CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY, " +
-                COL2 + " TEXT)";
-        db.execSQL(createTable);
+        db.delete(TABLE_NAME, "Url = ?", new String[] {url} );
+        db.close();
     }
 }
