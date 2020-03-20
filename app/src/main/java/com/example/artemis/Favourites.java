@@ -76,18 +76,21 @@ public class Favourites extends AppCompatActivity {
         if(arrayList.size()==0){
             return;
         }
+        boolean deleted = false;
         for (int i = 0; i < arrayList.size(); i++) {
             String item = arrayList.get(i);
             if (item.equals(titleInput.getText().toString())) {
                 arrayList.remove(i);
                 adapter.notifyDataSetChanged();
-            } else {
-                int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(this, "Please enter a number", duration);
-                toast.show();
+                deleted = true;
+                removeFromFavourites(urlInput.getText().toString());
             }
         }
-        removeFromFavourites(urlInput.getText().toString());
+        if (deleted = false) {
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(this, "Site not in favourites", duration);
+            toast.show();
+        }
     }
 
     /*
