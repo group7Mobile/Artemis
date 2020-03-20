@@ -43,12 +43,14 @@ public class Favourites extends AppCompatActivity {
 
         //constructor of adapter to store input item separately in list_item and put them in list_view
         adapter = new ArrayAdapter<String>(this,R.layout.list_item,R.id.txtitem,arrayList);
-        listView.setAdapter(adapter);;
+        listView.setAdapter(adapter);
         Button btnAdd = (Button) findViewById(R.id.button21);
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addFavourite();
+                String newItem = titleInput.getText().toString();
+                String newItem2 = urlInput.getText().toString();
+                addFavourite(newItem, newItem2);
             }
         });
         Button btnPop = (Button) findViewById(R.id.button24);
@@ -59,6 +61,14 @@ public class Favourites extends AppCompatActivity {
             }
         });
         //ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.activity_favourites,R.id.textView,arrayList);
+        Bundle getIntent = getIntent().getExtras();
+        if (getIntent != null) {
+            String title = getIntent.getString(Intent.EXTRA_TITLE);
+            String link = getIntent.getString(Intent.EXTRA_PROCESS_TEXT);
+            addFavourite(title, link);
+            Intent intent = new Intent(Favourites.this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void mainPage(View v) {
@@ -66,11 +76,9 @@ public class Favourites extends AppCompatActivity {
         startActivity(goMainPage);
     }
 
-    public void addFavourite() {
-        String newItem = titleInput.getText().toString();
-        String newItem2 = urlInput.getText().toString();
+    public void addFavourite(String ttl, String link) {
         //every time add an item, add it in the top of stack by adding it to the 0 index of the arrayList
-        if (titleInput.getText().toString().equals("")) {
+        if (ttl.equals("")) {
             int duration = Toast.LENGTH_SHORT;
             Toast toast = Toast.makeText(this, "Please enter a title", duration);
             toast.show();
@@ -79,8 +87,8 @@ public class Favourites extends AppCompatActivity {
             Toast toast = Toast.makeText(this, "Please enter a URL", duration);
             toast.show();
         } else {
-            arrayList.add(newItem);
-            addToDatabase(newItem, newItem2);
+            arrayList.add(ttl);
+            addToDatabase(ttl, link);
             adapter.notifyDataSetChanged();
         }
     }
