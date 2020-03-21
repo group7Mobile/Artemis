@@ -13,13 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="com.example.artemis.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name="com.example.artemis.MainActivity"/>
         <activity android:name="com.example.artemis.AccountPage"/>
         <activity android:name="com.example.artemis.About"/>
         <activity android:name="com.example.artemis.Filters"/>
@@ -36,6 +30,13 @@
         <activity android:name="com.example.artemis.ScreenTime"/>
         <activity android:name="com.example.artemis.BlackList"/>
         <activity android:name="com.example.artemis.Settings"/>
+        <activity android:name="com.example.artemis.Splash_Screen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
     </application>
 
