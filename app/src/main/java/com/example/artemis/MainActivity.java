@@ -247,7 +247,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void homeP(View v) {
-        String homePage = hpDatabaseHelper.getHomePage();
+        String homePage = "";
+        try {
+            homePage = hpDatabaseHelper.getHomePage();
+        } catch (Exception e) {
+
+        }
         if (homePage.equals("")) {
             try {
                 SharedPreferences getSavedHP;
