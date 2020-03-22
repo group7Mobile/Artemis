@@ -19,10 +19,10 @@ public class FavDialog extends AppCompatDialogFragment {
     private EditText titleBox;
     private TextView question;
     private CheckBox homePage;
+    private boolean result;
     private String title;
     private String url;
     private boolean hp;
-    private FavList favList;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -32,7 +32,6 @@ public class FavDialog extends AppCompatDialogFragment {
         titleBox = view.findViewById(R.id.title);
         question = view.findViewById(R.id.question);
         homePage = view.findViewById(R.id.checkBox);
-        favList = new FavList();
         String urlVisual;
         try {
             if (getUrl().length() > 35) {
@@ -45,19 +44,20 @@ public class FavDialog extends AppCompatDialogFragment {
         }
         String qst = "Do you want to add\n " + urlVisual + " \nin favorites?";
         question.setText(qst);
+        titleBox.setText(title);
         builder.setView(view).setTitle("fav_dlg")
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        setResult(false);
                     }
                 })
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        setResult(true);
                         setTitleBox();
                         setHp();
-                        favList.pushAll(title, url, hp);
                     }
                 });
         return builder.create();
@@ -75,6 +75,10 @@ public class FavDialog extends AppCompatDialogFragment {
         hp = (homePage.isChecked());
     }
 
+    public void setResult(boolean b) {
+        result = b;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -87,12 +91,13 @@ public class FavDialog extends AppCompatDialogFragment {
         return hp;
     }
 
-    public String getHP() {
-        return favList.getHomePage();
+    public void setTitle(String s) {
+        title = s;
     }
 
-    public void setTitleBox(String s) {
-        titleBox.setText(s);
+    public boolean getResult() {
+        return result;
     }
+
 
 }

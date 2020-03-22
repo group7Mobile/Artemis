@@ -1,5 +1,6 @@
 package com.example.artemis;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
@@ -7,8 +8,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,6 +33,7 @@ public class Favourites extends AppCompatActivity {
     private ImageButton deleteButton;
     //private SharedPreferences fav;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +42,7 @@ public class Favourites extends AppCompatActivity {
         dbHelper = new FavDatabaseHelper(this);
         urlInput = (EditText) findViewById(R.id.editText3);
         titleInput = (EditText) findViewById(R.id.editTextTitle);
-        listView = findViewById(R.id.listView2);
+        listView =  findViewById(R.id.listView2);
         arrayList = new ArrayList<>();
         retrieveFromDatabase();
 
@@ -67,6 +72,7 @@ public class Favourites extends AppCompatActivity {
             String link = getIntent.getString(Intent.EXTRA_PROCESS_TEXT);
             addFavourite(title, link);
             Intent intent = new Intent(Favourites.this, MainActivity.class);
+            intent.putExtra(Intent.EXTRA_RETURN_RESULT, link);
             startActivity(intent);
         }
     }
@@ -82,7 +88,7 @@ public class Favourites extends AppCompatActivity {
             int duration = Toast.LENGTH_SHORT;
             Toast toast = Toast.makeText(this, "Please enter a title", duration);
             toast.show();
-        } else if (urlInput.getText().toString().equals("")) {
+        } else if (link.equals("")) {
             int duration = Toast.LENGTH_SHORT;
             Toast toast = Toast.makeText(this, "Please enter a URL", duration);
             toast.show();
@@ -130,6 +136,13 @@ public class Favourites extends AppCompatActivity {
         }
         cursor.close();
         db.close();
+    }
+
+    public String getUrl(String title) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String selectString = "SELECT * FROM favs_table where Title = " + title;
+        Cursor cursor = db.rawQuery(selectString, null);
+        return cursor.getString(cursor.getColumnIndex("Url"));
     }
 
     /*

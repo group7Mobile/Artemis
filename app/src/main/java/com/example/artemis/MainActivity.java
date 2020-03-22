@@ -2,9 +2,11 @@ package com.example.artemis;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -18,13 +20,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText addressBar;
     private WebView viewer;
     private String tempUrl;
+    private String titleFromWebView;
     private String home;
     private TextView xross;
     private TextView hdr;
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         viewer = findViewById(R.id.viewer);
         xross = findViewById(R.id.clear);
         hdr = findViewById(R.id.textView7);
+        favDialog = new FavDialog();
         xrossInvisible(null);
         favDatabaseHelper = new FavDatabaseHelper(this);
         hpDatabaseHelper = new HPDatabaseHelper(this);
@@ -54,84 +57,74 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_GO) {
+                    filterUrl(addressBar.getText().toString());
                     go(null);
+
                 }
+
                 return false;
             }
         });
-
-
+        Bundle getFromFavs = getIntent().getExtras();
+        if (getFromFavs != null) {
+            tempUrl = getFromFavs.getString(Intent.EXTRA_RETURN_RESULT);
+            addressBar.setText(tempUrl);
+            go(null);
+        }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putString(savedUrl, home);
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        home = savedInstanceState.getString(savedUrl);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        SharedPreferences savedHp;
-        savedHp = getSharedPreferences("SAVED_URL", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = savedHp.edit();
-        editor.putString("MEM-URL", home);
-        editor.commit();
-    }
-
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void openDialog() {
-        favDialog = new FavDialog();
         refresh(null);
         favDialog.setUrl(viewer.getUrl());
         viewer.setWebViewClient(new WebViewClient() {
             @Override
-            public void onPageFinished(WebView v, String url) {
-                MainActivity.this.favDialog.setTitleBox(viewer.getTitle());
-            }
-        });
-        favDialog.show(getSupportFragmentManager(), "fav dialog");
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @RequiresApi(api = Build.VERSION_CODES.M)
-            @Override
-            public void run() {
-                String tlt;
-                if (favDialog.isHp()) {
-                    try {
-                        hpDatabaseHelper.rePopulate(viewer.getUrl());
-                    } catch (Exception e) {
-                        hpDatabaseHelper.addData(viewer.getUrl());
-                    }
-                }
-                tlt = favDialog.getTitle();
-                boolean insert = favDatabaseHelper.addData(tlt, viewer.getUrl());
-                if (insert) {
-                    Toast.makeText(getApplicationContext(), "Successfull", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "unSuccessfull", Toast.LENGTH_SHORT).show();
-                }
-                Intent intent = new Intent(MainActivity.this, Favourites.class);
-                intent.putExtra(Intent.EXTRA_TITLE, hdr.getText().toString());
-                intent.putExtra(Intent.EXTRA_PROCESS_TEXT, viewer.getUrl());
-                startActivity(intent);
-                Handler handler1 = new Handler();
-                handler1.postDelayed(new Runnable() {
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                favDialog.setTitle(viewer.getTitle());
+                titleFromWebView = viewer.getTitle();
+                favDialog.show(getSupportFragmentManager(), "fav dialog");
+                final FragmentManager fm = favDialog.getFragmentManager();
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        home = hpDatabaseHelper.getHomePage().toString();
-                       // Toast.makeText(getApplicationContext(), "hpr", Toast.LENGTH_LONG).show();
+                        fm.executePendingTransactions();
+                        favDialog.getDialog()
+                                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.M)
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                if (favDialog.getResult()) {
+                                     if (favDialog.isHp()) {
+                                     try {
+                                     hpDatabaseHelper.rePopulate(viewer.getUrl());
+                                     } catch (Exception e) {
+                                     hpDatabaseHelper.addData(viewer.getUrl());
+                                     }
+                                     }
+
+                                     Handler handler1 = new Handler();
+                                     handler1.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                    home = hpDatabaseHelper.getHomePage();
+                                    }
+                                    },200);
+                                    Intent intent = new Intent(MainActivity.this,
+                                            Favourites.class);
+                                    intent.putExtra(Intent.EXTRA_TITLE, titleFromWebView);
+                                    intent.putExtra(Intent.EXTRA_PROCESS_TEXT, viewer.getUrl());
+                                    startActivity(intent);
+                                }
+                            }
+                        });
                     }
-                },200);
+                }, 200);
             }
-        }, 10000);
+        });
     }
+
 
     public void settings(View v) {
         Intent goSettings = new Intent(this, Settings.class);
@@ -141,49 +134,55 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void go(View v) {
-        filterUrl(addressBar.getText().toString());
+        if (v != null) {
+            filterUrl(addressBar.getText().toString());
+        }
         viewer.loadUrl(tempUrl);
+        xrossInvisible(null);
+        viewer.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view1, String url) {
+                super.onPageFinished(view1, url);
+                hdr.setText(viewer.getTitle());
+            }
+        });
         View view = this.getCurrentFocus();
         if(view != null) {
-            InputMethodManager inm = (InputMethodManager) getSystemService((Activity.INPUT_METHOD_SERVICE));
-            inm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            xrossInvisible(null);
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    hdr.setText(viewer.getTitle());
-                }
-            }, 1000);
+            InputMethodManager inm = (InputMethodManager)
+                    getSystemService((Activity.INPUT_METHOD_SERVICE));
+            if (inm != null) {
+                inm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
         }
     }
 
     public void refresh(View v) {
-        viewer.loadUrl(viewer.getUrl());
-        xrossInvisible(null);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        viewer.reload();
+        viewer.setWebViewClient(new WebViewClient() {
             @Override
-            public void run() {
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
                 hdr.setText(viewer.getTitle());
             }
-        }, 1000);
+        });
+        xrossInvisible(null);
     }
 
     public void gobackPage(View v) {
         if (viewer.canGoBack()) {
             viewer.goBack();
-            xrossInvisible(null);
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
+            viewer.setWebViewClient(new WebViewClient() {
                 @Override
-                public void run() {
+                public void onPageFinished(WebView view, String url) {
+                    super.onPageFinished(view, url);
                     hdr.setText(viewer.getTitle());
                 }
-            }, 1000);
+            });
+            xrossInvisible(null);
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void favorite(View v) {
         openDialog();
     }
@@ -201,14 +200,15 @@ public class MainActivity extends AppCompatActivity {
             home = homePage;
         }
         viewer.loadUrl(home);
+        addressBar.setText(home);
         xrossInvisible(null);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        viewer.setWebViewClient(new WebViewClient() {
             @Override
-            public void run() {
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
                 hdr.setText(viewer.getTitle());
             }
-        }, 1000);
+        });
     }
 
     public String filterUrl(String link) {
