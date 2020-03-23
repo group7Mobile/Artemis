@@ -1,7 +1,9 @@
 package com.example.artemis;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
@@ -50,11 +52,14 @@ public class Settings extends AppCompatActivity {
 
     public void favourites(View v) {
         Intent goFavourites = new Intent(Settings.this, Favourites.class);
+        goFavourites.putExtra(Intent.EXTRA_TEXT, 2);
         startActivity(goFavourites);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void passwords(View v) {
         Intent goPasswords = new Intent(Settings.this, Passwords.class);
+        goPasswords.putExtra(Intent.EXTRA_REFERRER, 2);
         startActivity(goPasswords);
     }
 

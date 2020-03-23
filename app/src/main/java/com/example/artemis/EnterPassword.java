@@ -48,4 +48,10 @@ public class EnterPassword extends AppCompatActivity {
         goMainPage.putExtra(Intent.EXTRA_RETURN_RESULT, "");
         startActivity(goMainPage);
     }
+
+    public void goToFavPage(View v) {
+        Intent goFavPage = new Intent(EnterPassword.this, Favourites.class);
+        goFavPage.putExtra(Intent.EXTRA_TEXT, 1);
+        startActivity(goFavPage);
+    }
 }

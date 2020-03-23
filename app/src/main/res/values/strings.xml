@@ -9,4 +9,5 @@
     <string name="sign_out">Sign out</string>
     <string name="phone">Phone</string>
     <string name="not_allowed">Website is Not Allowed</string>
+    <string name="goFavs">Go to Favorites</string>
 </resources>

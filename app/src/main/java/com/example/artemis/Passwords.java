@@ -14,12 +14,19 @@ public class Passwords extends AppCompatActivity {
 
     EditText editText, editText2;
     Button button;
+    private Button goFav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_passwords);
-
+        goFav = findViewById(R.id.button34);
+         Bundle getIntent = getIntent().getExtras();
+         if (getIntent.getInt(Intent.EXTRA_REFERRER) == 1) {
+             goFav.animate().alpha(1.0f).setDuration(0);
+        } else {
+             goFav.animate().alpha(0.0f).setDuration(0);
+         }
         editText = (EditText) findViewById(R.id.editText);
         editText2 = (EditText) findViewById(R.id.editText2);
         button = (Button) findViewById(R.id.button11);
@@ -56,5 +63,11 @@ public class Passwords extends AppCompatActivity {
         Intent goMainPage = new Intent(this, MainActivity.class);
         goMainPage.putExtra(Intent.EXTRA_RETURN_RESULT, "");
         startActivity(goMainPage);
+    }
+
+    public void goToFavPage(View v) {
+        Intent goFav = new Intent(Passwords.this, Favourites.class);
+        goFav.putExtra(Intent.EXTRA_TEXT, 1);
+        startActivity(goFav);
     }
 }

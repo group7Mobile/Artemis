@@ -2,8 +2,10 @@ package com.example.artemis;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.PagerAdapter;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -12,9 +14,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -31,6 +35,8 @@ public class Favourites extends AppCompatActivity {
     private FavDatabaseHelper dbHelper;
     private ListView listView;
     private ImageButton deleteButton;
+    String pageId =null;
+
     //private SharedPreferences fav;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -45,6 +51,7 @@ public class Favourites extends AppCompatActivity {
         listView =  findViewById(R.id.listView2);
         arrayList = new ArrayList<>();
         retrieveFromDatabase();
+
 
         //constructor of adapter to store input item separately in list_item and put them in list_view
         adapter = new ArrayAdapter<String>(this,R.layout.list_item,R.id.txtitem,arrayList);
@@ -65,9 +72,9 @@ public class Favourites extends AppCompatActivity {
                 removeFavourite();
             }
         });
-        //ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.activity_favourites,R.id.textView,arrayList);
+        ArrayAdapter adapter = new ArrayAdapter<String>(this,R.layout.activity_favourites,R.id.textView,arrayList);
         Bundle getIntent = getIntent().getExtras();
-        if (getIntent != null) {
+        if (getIntent != null && getIntent.getInt(Intent.EXTRA_TEXT) != 1 && getIntent.getInt(Intent.EXTRA_TEXT) != 2) {
             String title = getIntent.getString(Intent.EXTRA_TITLE);
             String link = getIntent.getString(Intent.EXTRA_PROCESS_TEXT);
             addFavourite(title, link);
@@ -78,8 +85,19 @@ public class Favourites extends AppCompatActivity {
     }
 
     public void mainPage(View v) {
-        Intent goMainPage = new Intent(this, Settings.class);
-        startActivity(goMainPage);
+        Bundle getterFav = getIntent().getExtras();
+        if (getterFav != null) {
+            int res = getterFav.getInt(Intent.EXTRA_TEXT);
+            if (res == 1) {
+                Intent goMainPage = new Intent(this, MainActivity.class);
+                startActivity(goMainPage);
+            } else {
+                if (res == 2) {
+                    Intent goMainPage1 = new Intent(this, Settings.class);
+                    startActivity(goMainPage1);
+                }
+            }
+        }
     }
 
     public void addFavourite(String ttl, String link) {
@@ -112,6 +130,41 @@ public class Favourites extends AppCompatActivity {
             removeFromFavourites(titleInput.getText().toString());
         }
     }
+    /*private View.OnClickListener onDelete=new View.OnClickListener() {
+        public void onClick(View v) {
+            //if we haven't clicked a note yet, do nothing
+            if (pageId==null) {
+                return;
+            }
+            else{
+                //we have have clicked a note, then delete it!
+                removeFavourite();
+                //set noteId back to null, so the next note will be added as new
+                pageId=null;
+
+            }
+
+            urlInput.setText("");
+            titleInput.setText("");
+        }
+    };*/
+
+    private AdapterView.OnItemClickListener onListClick=new AdapterView.OnItemClickListener() {
+        public void onItemClick(AdapterView<?> parent,
+                                View view, int position,
+                                long id)
+        {
+            //get the id of the item in the list clicked on
+            //we need this so we can update the changes later
+            pageId =String.valueOf(id);
+            //query the database for that ID
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            Cursor c=db.rawQuery("SELECT ID, Title, Url FROM favs_table WHERE ID=?", null);
+
+
+
+        }
+    };
 
     /*
      * 	Adds a favourite to the list. To save to sharedPreferences, must convert arraylist to gson:
@@ -148,9 +201,27 @@ public class Favourites extends AppCompatActivity {
     /*
      * Removes a favourite from the list.
      */
-    public void removeFromFavourites(String title) {
+    public void removeFromFavourites(String id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.delete("favs_table", "Title = ?", new String[] {title});
+        db.delete("favs_table", "Title = ?", new String[] {id});
         db.close();
+    }
+
+}
+class PageAdapter extends CursorAdapter {
+
+
+    public PageAdapter(Context context, Cursor c) {
+        super(context, c);
+    }
+
+    @Override
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+        return null;
+    }
+
+    @Override
+    public void bindView(View view, Context context, Cursor cursor) {
+
     }
 }

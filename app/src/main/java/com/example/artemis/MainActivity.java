@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                                      handler1.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                    home = hpDatabaseHelper.getHomePage();
+                                        home = hpDatabaseHelper.getHomePage();
                                     }
                                     },200);
                                     Intent intent = new Intent(MainActivity.this,
@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
             // If there is no password
             addToCurrentStateDB(viewer.getUrl());
             Intent goSettings = new Intent(this, Passwords.class);
+            goSettings.putExtra(Intent.EXTRA_REFERRER, 1);
             startActivity(goSettings);
             xrossInvisible(null);
             finish();
