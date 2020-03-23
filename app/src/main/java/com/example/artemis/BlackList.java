@@ -14,17 +14,8 @@ import android.widget.EditText;
 import java.util.ArrayList;
 
 public class BlackList extends AppCompatActivity {
+    private EditText blUrl;
 
-    private EditText blUrl1;
-    private EditText blUrl2;
-    private EditText blUrl3;
-    private EditText blUrl4;
-    private EditText blUrl5;
-    private EditText blUrl6;
-    private EditText blUrl7;
-    private EditText blUrl8;
-    private EditText blUrl9;
-    private EditText blUrl10;
     private ArrayList<EditText> blackList;
     BlackListDatabaseHelper blackListDatabaseHelper;
 
@@ -33,27 +24,9 @@ public class BlackList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_black_list);
         blackListDatabaseHelper = new BlackListDatabaseHelper(this);
-        blUrl1 = findViewById(R.id.editText2);
-        blUrl2 = findViewById(R.id.editText3);
-        blUrl3 = findViewById(R.id.editText4);
-        blUrl4 = findViewById(R.id.editText5);
-        blUrl5 = findViewById(R.id.editText6);
-        blUrl6 = findViewById(R.id.editText7);
-        blUrl7 = findViewById(R.id.editText8);
-        blUrl8 = findViewById(R.id.editText9);
-        blUrl9 = findViewById(R.id.editText10);
-        blUrl10 = findViewById(R.id.editText11);
+        blUrl = findViewById(R.id.editText31);
         blackList = new ArrayList<>();
-        blackList.add(blUrl1);
-        blackList.add(blUrl2);
-        blackList.add(blUrl3);
-        blackList.add(blUrl4);
-        blackList.add(blUrl5);
-        blackList.add(blUrl6);
-        blackList.add(blUrl7);
-        blackList.add(blUrl8);
-        blackList.add(blUrl9);
-        blackList.add(blUrl10);
+        blackList.add(blUrl);
         retrieveFromBLDB();
     }
 
