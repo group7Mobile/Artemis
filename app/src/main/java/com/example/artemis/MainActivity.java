@@ -3,7 +3,6 @@ package com.example.artemis;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -18,16 +17,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -67,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         currentStateDatabaseHelper = new CurrentStateDatabaseHelper(this);
         viewer.setWebViewClient(new WebViewClient());
         viewer.getSettings().setUseWideViewPort(true);
+        viewer.getSettings().setLoadWithOverviewMode(true);
         viewer.getSettings().setJavaScriptEnabled(true);
         if (savedInstanceState != null) {
             home = savedInstanceState.getString(savedUrl);
@@ -241,6 +238,32 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void goForwardPage(View v) {
+        if (viewer.canGoForward()) {
+            viewer.goForward();
+            viewer.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                    super.onPageStarted(view, url, favicon);
+                    if (isBlocked(url)) {
+                        viewer.loadUrl("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg");
+                    }
+                }
+                @Override
+                public void onPageFinished(WebView view1, String url) {
+                    super.onPageFinished(view1, url);
+                    if (!viewer.getUrl().equals("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg")) {
+                        hdr.setText(viewer.getTitle());
+                        addressBar.setText(viewer.getUrl());
+                    } else {
+                        hdr.setText(R.string.not_allowed);
+                    }
+                }
+            });
+            xrossInvisible(null);
+        }
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void favorite(View v) {
         openDialog();
@@ -268,9 +291,21 @@ public class MainActivity extends AppCompatActivity {
         xrossInvisible(null);
         viewer.setWebViewClient(new WebViewClient() {
             @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                hdr.setText(viewer.getTitle());
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                if (isBlocked(url)) {
+                    viewer.loadUrl("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg");
+                }
+            }
+            @Override
+            public void onPageFinished(WebView view1, String url) {
+                super.onPageFinished(view1, url);
+                if (!viewer.getUrl().equals("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg")) {
+                    hdr.setText(viewer.getTitle());
+                    addressBar.setText(viewer.getUrl());
+                } else {
+                    hdr.setText(R.string.not_allowed);
+                }
             }
         });
     }
