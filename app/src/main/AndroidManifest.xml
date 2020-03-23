@@ -4,42 +4,44 @@
     package="com.example.artemis">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
+
     <application
-        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_artemis"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="com.example.artemis.MainActivity"/>
-        <activity android:name="com.example.artemis.AccountPage"/>
-        <activity android:name="com.example.artemis.About"/>
-        <activity android:name="com.example.artemis.Filters"/>
-        <activity android:name="com.example.artemis.AlertSettings"/>
-        <activity android:name="com.example.artemis.Privacy"/>
-        <activity android:name="com.example.artemis.PopUpBlocking"/>
-        <activity android:name="com.example.artemis.Passwords"/>
-        <activity android:name="com.example.artemis.Favourites"/>
-        <activity android:name="com.example.artemis.Background"/>
-        <activity android:name="com.example.artemis.Shortcuts"/>
-        <activity android:name="com.example.artemis.TimeTable"/>
-        <activity android:name="com.example.artemis.HomePageWidgets"/>
-        <activity android:name="com.example.artemis.HomePage"/>
-        <activity android:name="com.example.artemis.ScreenTime"/>
-        <activity android:name="com.example.artemis.BlackList"/>
-        <activity android:name="com.example.artemis.Settings"/>
-        <activity android:name="com.example.artemis.Splash_Screen">
+        <activity android:name=".EnterPassword" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".AccountPage" />
+        <activity android:name=".About" />
+        <activity android:name=".Filters" />
+        <activity android:name=".AlertSettings" />
+        <activity android:name=".Privacy" />
+        <activity android:name=".PopUpBlocking" />
+        <activity android:name=".Passwords" />
+        <activity android:name=".Favourites" />
+        <activity android:name=".Background" />
+        <activity android:name=".Shortcuts" />
+        <activity android:name=".TimeTable" />
+        <activity android:name=".HomePageWidgets" />
+        <activity android:name=".HomePage" />
+        <activity android:name=".ScreenTime" />
+        <activity android:name=".BlackList" />
+        <activity android:name=".Settings" />
+        <activity android:name=".Splash_Screen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

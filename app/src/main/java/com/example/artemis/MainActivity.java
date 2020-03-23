@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     BlackListDatabaseHelper blackListDatabaseHelper;
     CurrentStateDatabaseHelper currentStateDatabaseHelper;
     static final String savedUrl = "url";
+    String password;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -141,14 +142,27 @@ public class MainActivity extends AppCompatActivity {
                 }, 200);
             }
         });
+
     }
 
-
     public void settings(View v) {
-        addToCurrentStateDB(viewer.getUrl());
-        Intent goSettings = new Intent(this, Settings.class);
-        startActivity(goSettings);
-        xrossInvisible(null);
+        SharedPreferences settings = getSharedPreferences("PREFS", 0);
+        password = settings.getString("password", "");
+        if(password.equals("")){
+            // If there is no password
+            addToCurrentStateDB(viewer.getUrl());
+            Intent goSettings = new Intent(this, Passwords.class);
+            startActivity(goSettings);
+            xrossInvisible(null);
+            finish();
+        } else {
+            // If there is a password
+            addToCurrentStateDB(viewer.getUrl());
+            Intent goSettings2 = new Intent(this, EnterPassword.class);
+            startActivity(goSettings2);
+            xrossInvisible(null);
+            finish();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
