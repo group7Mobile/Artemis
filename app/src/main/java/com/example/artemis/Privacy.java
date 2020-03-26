@@ -46,7 +46,7 @@ public class Privacy extends AppCompatActivity {
             }
         });
         Button btnClear = (Button) findViewById(R.id.button14);
-        btnShow.setOnClickListener(new View.OnClickListener() {
+        btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 arrayList.clear();
@@ -54,12 +54,8 @@ public class Privacy extends AppCompatActivity {
             }
         });
 
-        listView =  findViewById(R.id.listviewH);
-        arrayList = new ArrayList<>();
-        getBrowserHist();
 
         //constructor of adapter to store input item separately in list_item and put them in list_view
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_item, R.id.txtitem, arrayList);
 
     }
 

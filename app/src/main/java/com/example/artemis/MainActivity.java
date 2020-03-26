@@ -2,6 +2,8 @@ package com.example.artemis;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView hdr;
     private FavDialog favDialog;
     private ArrayList<String> blockedList;
+    private ConstraintLayout constraintLayout; //for background colour
     FavDatabaseHelper favDatabaseHelper;
     HPDatabaseHelper hpDatabaseHelper;
     BlackListDatabaseHelper blackListDatabaseHelper;
@@ -72,11 +75,18 @@ public class MainActivity extends AppCompatActivity {
         hpDatabaseHelper = new HPDatabaseHelper(this);
         historyDBHelper = new HistoryDBHelper(this);
         currentStateDatabaseHelper = new CurrentStateDatabaseHelper(this);
+        historyDBHelper = new HistoryDBHelper(this);
         viewer.setWebViewClient(new WebViewClient());
         viewer.setWebChromeClient(new ChromeClient());
         viewer.getSettings().setUseWideViewPort(true);
         viewer.getSettings().setLoadWithOverviewMode(true);
         viewer.getSettings().setJavaScriptEnabled(true);
+        historyDBHelper = new HistoryDBHelper(this);
+        constraintLayout = findViewById(R.id.constraintLayout);
+        //Gets the background theme from SharedPreferences:
+        SharedPreferences sharedPref = getSharedPreferences("bg", Context.MODE_PRIVATE);
+        int savedBg = sharedPref.getInt("bg", R.color.colorBG1);
+        constraintLayout.setBackgroundColor(ContextCompat.getColor(this, savedBg));
 
 
         if (savedInstanceState != null) {
