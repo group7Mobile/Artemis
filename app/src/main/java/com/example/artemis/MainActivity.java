@@ -22,6 +22,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     HPDatabaseHelper hpDatabaseHelper;
     BlackListDatabaseHelper blackListDatabaseHelper;
     CurrentStateDatabaseHelper currentStateDatabaseHelper;
+    HistoryDBHelper historyDBHelper;
     static final String savedUrl = "url";
     String password;
 
@@ -66,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
         viewer.getSettings().setUseWideViewPort(true);
         viewer.getSettings().setLoadWithOverviewMode(true);
         viewer.getSettings().setJavaScriptEnabled(true);
+
+
         if (savedInstanceState != null) {
             home = savedInstanceState.getString(savedUrl);
         }
@@ -73,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_GO) {
+
                     filterUrl(addressBar.getText().toString());
                     go(null);
                 }
@@ -89,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
             addressBar.setText(tempUrl);
             go(null);
         }
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -169,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void go(final View v) {
         if (v != null) {
+            historyDBHelper.addData(addressBar.getText().toString());
             filterUrl(addressBar.getText().toString());
         }
         viewer.loadUrl(tempUrl);

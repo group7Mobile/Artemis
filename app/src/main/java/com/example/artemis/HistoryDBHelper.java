@@ -34,6 +34,22 @@ public class HistoryDBHelper extends SQLiteOpenHelper {
     }
 
 
+    public boolean addData(String url){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL2, url);
+        Log.d(DB_NAME,"ADDING"+url+"to"+TABLE_NAME);
+        long result=db.insert(TABLE_NAME,null,contentValues);
+        if(result==-1){
+            db.close();
+            return false;
+        }else{
+            db.close();
+            return true;
+        }
+    }
+
+
 
     public Cursor getData() {
         SQLiteDatabase db = this.getWritableDatabase();
