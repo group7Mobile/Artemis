@@ -18,7 +18,8 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".EnterPassword" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity"
+            android:configChanges="orientation|screenSize" />
         <activity android:name=".AccountPage" />
         <activity android:name=".About" />
         <activity android:name=".Filters" />
