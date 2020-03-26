@@ -10,6 +10,9 @@ import android.provider.Browser;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+
+import android.widget.Button;
+
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -27,12 +30,37 @@ public class Privacy extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_privacy);
         dbHelper = new HistoryDBHelper(this);
+
+        listView = findViewById(R.id.listviewH);
+        arrayList = new ArrayList<>();
+
+        //constructor of adapter to store input item separately in list_item and put them in list_view
+        adapter = new ArrayAdapter<String>(this, R.layout.list_item, R.id.txtitem, arrayList);
+        listView.setAdapter(adapter);
+        Button btnShow = (Button) findViewById(R.id.button18);
+        btnShow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getBrowserHist();
+                adapter.notifyDataSetChanged();
+            }
+        });
+        Button btnClear = (Button) findViewById(R.id.button14);
+        btnShow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                arrayList.clear();
+                adapter.notifyDataSetChanged();
+            }
+        });
+
         listView =  findViewById(R.id.listviewH);
         arrayList = new ArrayList<>();
         getBrowserHist();
 
         //constructor of adapter to store input item separately in list_item and put them in list_view
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_item, R.id.txtitem, arrayList);
+
     }
 
     public void mainPage(View v) {
