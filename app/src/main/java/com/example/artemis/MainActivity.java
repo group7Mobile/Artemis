@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         xrossInvisible(null);
         favDatabaseHelper = new FavDatabaseHelper(this);
         hpDatabaseHelper = new HPDatabaseHelper(this);
+        historyDBHelper = new HistoryDBHelper(this);
         currentStateDatabaseHelper = new CurrentStateDatabaseHelper(this);
         viewer.setWebViewClient(new WebViewClient());
         viewer.setWebChromeClient(new ChromeClient());
