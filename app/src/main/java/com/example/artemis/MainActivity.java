@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebChromeClient;
@@ -28,6 +29,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     HPDatabaseHelper hpDatabaseHelper;
     BlackListDatabaseHelper blackListDatabaseHelper;
     CurrentStateDatabaseHelper currentStateDatabaseHelper;
+    private long backPressedTime;
     HistoryDBHelper historyDBHelper;
     static final String savedUrl = "url";
     String password;
@@ -111,6 +115,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         viewer.restoreState(savedInstanceState);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isFullScreen()) {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        } else {
+            if (viewer.canGoBack()) {
+                gobackPage(null);
+            } else {
+                if (backPressedTime + 2000 > System.currentTimeMillis()) {
+                    super.onBackPressed();
+                } else {
+                    Toast.makeText(getBaseContext(), "Press back again to exit",
+                            Toast.LENGTH_SHORT).show();
+                }
+                backPressedTime = System.currentTimeMillis();
+            }
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -507,5 +531,14 @@ public class MainActivity extends AppCompatActivity {
             ((FrameLayout)getWindow().getDecorView()).addView(this.mCustomView, new FrameLayout.LayoutParams(-1, -1));
             getWindow().getDecorView().setSystemUiVisibility(3846 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         }
+    }
+
+    public final boolean isFullScreen() {
+        int flg = getWindow().getAttributes().flags;
+        boolean flag = false;
+        if ((flg & WindowManager.LayoutParams.FLAG_FULLSCREEN) == WindowManager.LayoutParams.FLAG_FULLSCREEN) {
+            flag = true;
+        }
+        return flag;
     }
 }
