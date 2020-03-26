@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         favDatabaseHelper = new FavDatabaseHelper(this);
         hpDatabaseHelper = new HPDatabaseHelper(this);
         currentStateDatabaseHelper = new CurrentStateDatabaseHelper(this);
+        historyDBHelper = new HistoryDBHelper(this);
         viewer.setWebViewClient(new WebViewClient());
         viewer.setWebChromeClient(new ChromeClient());
         viewer.getSettings().setUseWideViewPort(true);
