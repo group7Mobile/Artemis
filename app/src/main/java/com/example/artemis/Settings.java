@@ -93,8 +93,6 @@ public class Settings extends AppCompatActivity {
         startActivity(goAccount);
     }
     public void mainPage(View v) {
-        Intent goMainPage = new Intent(this, MainActivity.class);
-        goMainPage.putExtra(Intent.EXTRA_RETURN_RESULT, "");
-        startActivity(goMainPage);
+        finish();
     }
 }

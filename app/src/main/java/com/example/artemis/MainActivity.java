@@ -103,17 +103,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        Bundle getFromFavs = getIntent().getExtras();
-        if (getFromFavs != null) {
-            if (!Objects.equals(getFromFavs.getString(Intent.EXTRA_RETURN_RESULT), "")) {
-                tempUrl = getFromFavs.getString(Intent.EXTRA_RETURN_RESULT);
-            } else {
-                tempUrl = retrieveFromCurrentStateDB();
-            }
-            addressBar.setText(tempUrl);
-            go(null);
-        }
-
     }
 
     @Override
@@ -187,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
                                         home = hpDatabaseHelper.getHomePage();
                                     }
                                     },200);
+                                     favDialog.dismiss();
                                     Intent intent = new Intent(MainActivity.this,
                                             Favourites.class);
                                     intent.putExtra(Intent.EXTRA_TITLE, titleFromWebView);
@@ -212,14 +202,12 @@ public class MainActivity extends AppCompatActivity {
             goSettings.putExtra(Intent.EXTRA_REFERRER, 1);
             startActivity(goSettings);
             xrossInvisible(null);
-            finish();
         } else {
             // If there is a password
             addToCurrentStateDB(viewer.getUrl());
             Intent goSettings2 = new Intent(this, EnterPassword.class);
             startActivity(goSettings2);
             xrossInvisible(null);
-            finish();
         }
     }
 

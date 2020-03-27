@@ -57,7 +57,6 @@ public class Filters extends AppCompatActivity {
     }
 
     public void mainPage(View v) {
-        Intent goMainPage = new Intent(this, Settings.class);
-        startActivity(goMainPage);
+        finish();
     }
 }

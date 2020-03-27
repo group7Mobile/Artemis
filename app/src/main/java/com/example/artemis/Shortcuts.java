@@ -15,7 +15,6 @@ public class Shortcuts extends AppCompatActivity {
     }
 
     public void mainPage(View v) {
-        Intent goMainPage = new Intent(Shortcuts.this, Settings.class);
-        startActivity(goMainPage);
+        finish();
     }
 }

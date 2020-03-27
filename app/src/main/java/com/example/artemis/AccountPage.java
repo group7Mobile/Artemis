@@ -14,7 +14,6 @@ public class AccountPage extends AppCompatActivity {
     }
 
     public void mainPage(View v) {
-        Intent goMainPage = new Intent(AccountPage.this, Settings.class);
-        startActivity(goMainPage);
+        finish();
     }
 }

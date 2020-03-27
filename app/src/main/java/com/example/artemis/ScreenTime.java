@@ -182,7 +182,6 @@ public class ScreenTime extends AppCompatActivity {
     }
 
     public void mainPage(View v) {
-        Intent goMainPage = new Intent(ScreenTime.this, Settings.class);
-        startActivity(goMainPage);
+        finish();
     }
 }

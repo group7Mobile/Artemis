@@ -60,7 +60,6 @@ public class HomePage extends AppCompatActivity {
     }
 
     public void mainPage(View v) {
-        Intent goMainPage = new Intent(HomePage.this, Settings.class);
-        startActivity(goMainPage);
+        finish();
     }
 }
