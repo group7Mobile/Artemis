@@ -15,7 +15,6 @@ public class HomePageWidgets extends AppCompatActivity {
     }
 
     public void mainPage(View v) {
-        Intent goMainPage = new Intent(HomePageWidgets.this, Settings.class);
-        startActivity(goMainPage);
+        finish();
     }
 }

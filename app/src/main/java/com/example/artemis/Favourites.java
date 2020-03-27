@@ -78,19 +78,17 @@ public class Favourites extends AppCompatActivity {
             String title = getIntent.getString(Intent.EXTRA_TITLE);
             String link = getIntent.getString(Intent.EXTRA_PROCESS_TEXT);
             addFavourite(title, link);
-            Intent intent = new Intent(Favourites.this, MainActivity.class);
-            intent.putExtra(Intent.EXTRA_RETURN_RESULT, link);
-            startActivity(intent);
+            finish();
         }
     }
 
     public void mainPage(View v) {
+        /**
         Bundle getterFav = getIntent().getExtras();
         if (getterFav != null) {
             int res = getterFav.getInt(Intent.EXTRA_TEXT);
             if (res == 1) {
-                Intent goMainPage = new Intent(this, MainActivity.class);
-                startActivity(goMainPage);
+                finish();
             } else {
                 if (res == 2) {
                     Intent goMainPage1 = new Intent(this, Settings.class);
@@ -98,6 +96,8 @@ public class Favourites extends AppCompatActivity {
                 }
             }
         }
+         **/
+        finish();
     }
 
     public void addFavourite(String ttl, String link) {

@@ -44,9 +44,7 @@ public class EnterPassword extends AppCompatActivity {
     }
 
     public void mainPage(View v) {
-        Intent goMainPage = new Intent(this, MainActivity.class);
-        goMainPage.putExtra(Intent.EXTRA_RETURN_RESULT, "");
-        startActivity(goMainPage);
+        finish();
     }
 
     public void goToFavPage(View v) {

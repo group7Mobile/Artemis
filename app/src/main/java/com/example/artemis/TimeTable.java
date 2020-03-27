@@ -69,7 +69,6 @@ public class TimeTable extends AppCompatActivity {
     }
 
     public void mainPage(View v) {
-        Intent goMainPage = new Intent(TimeTable.this, Settings.class);
-        startActivity(goMainPage);
+        finish();
     }
 }

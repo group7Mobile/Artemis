@@ -32,8 +32,7 @@ public class BlackList extends AppCompatActivity {
 
     public void mainPage(View v) {
         add(v);
-        Intent goMainPage = new Intent(BlackList.this, Settings.class);
-        startActivity(goMainPage);
+        finish();
     }
 
     public void addToBLDB() {

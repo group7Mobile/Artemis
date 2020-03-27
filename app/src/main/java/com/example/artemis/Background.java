@@ -32,8 +32,7 @@ public class Background extends AppCompatActivity {
     }
 
     public void mainPage(View v) {
-        Intent goMainPage = new Intent(Background.this, Settings.class);
-        startActivity(goMainPage);
+        finish();
     }
 
     public void changeA(View view) {
