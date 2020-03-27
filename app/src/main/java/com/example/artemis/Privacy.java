@@ -46,7 +46,7 @@ public class Privacy extends AppCompatActivity {
             }
         });
         Button btnClear = (Button) findViewById(R.id.button14);
-        btnShow.setOnClickListener(new View.OnClickListener() {
+        btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 arrayList.clear();
