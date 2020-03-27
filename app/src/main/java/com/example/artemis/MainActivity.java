@@ -4,7 +4,10 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText addressBar;
     private WebView viewer;
     private String tempUrl;
+    private String dialogUrl;
     private String titleFromWebView;
     private String home;
     private TextView xross;
@@ -67,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         xross = findViewById(R.id.clear);
         hdr = findViewById(R.id.textView7);
         favDialog = new FavDialog();
+        dialogUrl = "";
         blackListDatabaseHelper = new BlackListDatabaseHelper(this);
         blockedList = new ArrayList<>();
         getBlockedSites();
@@ -140,55 +145,47 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void openDialog() {
-        refresh(null);
-        favDialog.setUrl(viewer.getUrl());
-        viewer.setWebViewClient(new WebViewClient() {
+        favDialog.setUrl(dialogUrl);
+        favDialog.setTitle(hdr.getText().toString());
+        titleFromWebView = hdr.getText().toString();
+        favDialog.show(getSupportFragmentManager(), "fav dialog");
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
             @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                favDialog.setTitle(viewer.getTitle());
-                titleFromWebView = viewer.getTitle();
-                favDialog.show(getSupportFragmentManager(), "fav dialog");
-                final FragmentManager fm = favDialog.getFragmentManager();
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
+            public void run() {
+                favDialog.getDialog()
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.M)
                     @Override
-                    public void run() {
-                        fm.executePendingTransactions();
-                        favDialog.getDialog()
-                                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @RequiresApi(api = Build.VERSION_CODES.M)
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                if (favDialog.getResult()) {
-                                     if (favDialog.isHp()) {
-                                     try {
-                                     hpDatabaseHelper.rePopulate(viewer.getUrl());
-                                     } catch (Exception e) {
-                                     hpDatabaseHelper.addData(viewer.getUrl());
-                                     }
-                                     }
+                    public void onDismiss(DialogInterface dialog) {
+                        if (favDialog.getResult()) {
+                             if (favDialog.isHp()) {
+                             try {
+                             hpDatabaseHelper.rePopulate(dialogUrl);
+                             } catch (Exception e) {
+                             hpDatabaseHelper.addData(dialogUrl);
+                             }
+                             }
 
-                                     Handler handler1 = new Handler();
-                                     handler1.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        home = hpDatabaseHelper.getHomePage();
-                                    }
-                                    },200);
-                                     favDialog.dismiss();
-                                    Intent intent = new Intent(MainActivity.this,
-                                            Favourites.class);
-                                    intent.putExtra(Intent.EXTRA_TITLE, titleFromWebView);
-                                    intent.putExtra(Intent.EXTRA_PROCESS_TEXT, viewer.getUrl());
-                                    startActivity(intent);
-                                }
+                             Handler handler1 = new Handler();
+                             handler1.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                home = hpDatabaseHelper.getHomePage();
                             }
-                        });
+                            },200);
+
+                            Intent intent = new Intent(MainActivity.this,
+                                    Favourites.class);
+                            intent.putExtra(Intent.EXTRA_TITLE, titleFromWebView);
+                            intent.putExtra(Intent.EXTRA_PROCESS_TEXT, dialogUrl);
+                            startActivity(intent);
+                        }
+                        favDialog.dismiss();
                     }
-                }, 200);
+                });
             }
-        });
+        }, 200);
 
     }
 
@@ -223,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
+                dialogUrl = url;
                 if (isBlocked(url)) {
                     viewer.loadUrl("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg");
                 }
