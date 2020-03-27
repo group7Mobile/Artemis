@@ -100,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
         viewer.getSettings().setUseWideViewPort(true);
         viewer.getSettings().setLoadWithOverviewMode(true);
         viewer.getSettings().setJavaScriptEnabled(true);
+        viewer.getSettings().setBuiltInZoomControls(true);
+        viewer.getSettings().setDisplayZoomControls(false);
         historyDBHelper = new HistoryDBHelper(this);
         constraintLayout = findViewById(R.id.constraintLayout);
         //Gets the background theme from SharedPreferences:
