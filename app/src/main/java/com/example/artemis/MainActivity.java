@@ -33,6 +33,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView xross;
     private TextView hdr;
     private FavDialog favDialog;
+    private ProgressBar pg;
     private ArrayList<String> blockedList;
     private ConstraintLayout constraintLayout; //for background colour
     FavDatabaseHelper favDatabaseHelper;
@@ -70,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
         viewer = findViewById(R.id.viewer);
         xross = findViewById(R.id.clear);
         hdr = findViewById(R.id.textView7);
+        pg = findViewById(R.id.progressBar);
+        pg.setVisibility(ProgressBar.GONE);
         favDialog = new FavDialog();
         dialogUrl = "";
         blackListDatabaseHelper = new BlackListDatabaseHelper(this);
@@ -106,6 +110,18 @@ public class MainActivity extends AppCompatActivity {
                     go(null);
                 }
                 return false;
+            }
+        });
+
+        viewer.setWebChromeClient(new WebChromeClient() {
+            public void onProgressChanged(WebView view, int progress) {
+                if (progress < 100 && pg.getVisibility() == ProgressBar.GONE) {
+                    pg.setVisibility(ProgressBar.VISIBLE);
+                }
+                pg.setProgress(progress);
+                if (progress == 100) {
+                    pg.setVisibility(ProgressBar.GONE);
+                }
             }
         });
     }
@@ -367,6 +383,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void cancelpageLoad(View v) {
+        viewer.stopLoading();
     }
 
     public String filterUrl(String link) {
