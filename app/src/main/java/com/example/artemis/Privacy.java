@@ -51,6 +51,7 @@ public class Privacy extends AppCompatActivity {
             public void onClick(View v) {
                 arrayList.clear();
                 adapter.notifyDataSetChanged();
+                clearBrowserHist();
             }
         });
 
@@ -75,5 +76,11 @@ public class Privacy extends AppCompatActivity {
             cursor.close();
             db.close();
         }
+    public void clearBrowserHist()  {
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.execSQL("DELETE FROM history_table;");
+        db.close();
+    }
 
 }
