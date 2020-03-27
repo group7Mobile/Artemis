@@ -1,38 +1,51 @@
 package com.example.artemis;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class AccountDatabaseHelper extends SQLiteOpenHelper {
-
-    public static final String DB_NAME = "AccountDatabaseHelper";
-    public static final int DB_VERSION = 1;
-    public static final String TABLE_NAME = "Account_table";
-    public static final String COL1 = "ID";
-    public static final String COL2 = "FirstName";
-    public static final String COL3 = "LastName";
-    public static final String COL4 = "Email";
-    public static final String COL5 = "Password";
-
     public AccountDatabaseHelper(Context context) {
-        super(context, DB_NAME, null, DB_VERSION);
+        super(context, "Login.db", null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTable = "CREATE TABLE " + TABLE_NAME + " (" +
-                COL1 + " INTEGER PRIMARY KEY, " +
-                COL2 + " TEXT, " +
-                COL3 + " TEXT, " +
-                COL4 + " TEXT, " +
-                COL5 + " TEXT);";
-        db.execSQL(createTable);
+        db.execSQL("Create table user(email text primary key, password text)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        onCreate(db);
+        db.execSQL("drop table if exists user");
+    }
+
+    //Inserting into database
+    public boolean insert(String email, String password){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("email", email);
+        contentValues.put("password", password);
+        long ins = db.insert("user", null, contentValues);
+        if(ins==-1) return false;
+        else return true;
+    }
+
+    //Check if email exists
+    public boolean checkEmail(String email){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor =  db.rawQuery("Select * From user Where email =?", new String[]{email});
+        if(cursor.getCount()>0) return false;
+        else return true;
+    }
+
+    //Check the email and password
+    public boolean emailpassword(String email, String password){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("Select * From user Where email =? And password =?", new String[]{email, password});
+        if(cursor.getCount()>0) return true;
+        else return false;
     }
 }
+

@@ -15,38 +15,47 @@ import android.widget.Toast;
 
 public class AccountPage extends AppCompatActivity {
 
-    SQLiteOpenHelper openHelper;
-    SQLiteDatabase db;
-    Button reg, sign;
-    EditText _typename, _tame, txt_email, txt_pass;
-
+    EditText e1, e2, e3;
+    Button b1, b2;
+    AccountDatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
-        openHelper = new AccountDatabaseHelper(this);
-        reg = (Button) findViewById(R.id.button9);
-        sign = (Button) findViewById(R.id.button35);
-        _typename = (EditText) findViewById(R.id.editText5);
-        _tame = (EditText) findViewById(R.id.editText6);
-        txt_email = (EditText) findViewById(R.id.editText7);
-        txt_pass = (EditText) findViewById(R.id.editText8);
+        e1 = (EditText)findViewById(R.id.editText7);
+        e2 = (EditText)findViewById(R.id.editText8);
+        e3 = (EditText)findViewById(R.id.editText5);
+        b1 = (Button)findViewById(R.id.button9);
+        b2 = (Button)findViewById(R.id.button35);
+        db = new AccountDatabaseHelper(this);
 
-        reg.setOnClickListener(new View.OnClickListener() {
+        b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                db = openHelper.getWritableDatabase();
-                String fname = _typename.getText().toString();
-                String lname = _tame.getText().toString();
-                String email = txt_email.getText().toString();
-                String pass = txt_pass.getText().toString();
-                addData(fname, lname, email, pass);
-                Toast.makeText(getApplicationContext(), "Account Created", Toast.LENGTH_LONG).show();
+                String s1 = e1.getText().toString();
+                String s2 = e2.getText().toString();
+                String s3 = e3.getText().toString();
+                if (s1.equals("") || s2.equals("") || s3.equals("")) {
+                    Toast.makeText(getApplicationContext(), "Fields are empty", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (s2.equals(s3)) {
+                        Boolean checkEmail = db.checkEmail(s1);
+                        if (checkEmail == true) {
+                            Boolean insert = db.insert(s1, s2);
+                            if (insert == true) {
+                                Toast.makeText(getApplicationContext(), "Registered Successfully", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Email already exists", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    Toast.makeText(getApplicationContext(), "Password do not match", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
-        sign.setOnClickListener(new View.OnClickListener() {
+        b2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(AccountPage.this, Account_Login.class);
@@ -55,15 +64,6 @@ public class AccountPage extends AppCompatActivity {
         });
     }
 
-    public void addData(String fname, String lname, String email, String pass) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(AccountDatabaseHelper.COL2, fname);
-        contentValues.put(AccountDatabaseHelper.COL3, lname);
-        contentValues.put(AccountDatabaseHelper.COL4, email);
-        contentValues.put(AccountDatabaseHelper.COL5, pass);
-        long id = db.insert(AccountDatabaseHelper.TABLE_NAME, null, contentValues);
-
-    }
 
     public void mainPage(View v) {
         finish();

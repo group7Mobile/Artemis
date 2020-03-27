@@ -15,35 +15,28 @@ import android.widget.Toast;
 
 public class Account_Login extends AppCompatActivity {
 
-    SQLiteOpenHelper openHelper;
-    SQLiteDatabase db;
-    Button btnsign;
-    EditText txt_email, txt_pass;
-    Cursor cursor;
+    EditText e1, e2;
+    Button b1;
+    AccountDatabaseHelper db;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account__login);
-        openHelper = new AccountDatabaseHelper(this);
-        db = openHelper.getWritableDatabase();
-        btnsign = (Button)findViewById(R.id.button30);
-        txt_email =  (EditText) findViewById(R.id.editText9);
-        txt_pass = (EditText) findViewById(R.id.editText10);
-        btnsign.setOnClickListener(new View.OnClickListener() {
+        db = new AccountDatabaseHelper(this);
+        e1 = (EditText)findViewById(R.id.editText9);
+        e2 = (EditText)findViewById(R.id.editText10);
+        b1 = (Button) findViewById(R.id.button30);
+
+        b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = txt_email.getText().toString();
-                String pass = txt_pass.getText().toString();
-                cursor = db.rawQuery("SELECT * FROM " + AccountDatabaseHelper.TABLE_NAME + " WHERE " + AccountDatabaseHelper.COL4 + " =? AND " + AccountDatabaseHelper.COL5 + " =? ", new String[] {email, pass});
-                if(cursor!=null){
-                    if(cursor.getCount()>0){
-                        cursor.moveToNext();
-                        Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
-                    }
-                }
+                String email = e1.getText().toString();
+                String password = e2.getText().toString();
+                boolean checkemailpassword = db.emailpassword(email, password);
+                if(checkemailpassword==true)
+                    Toast.makeText(getApplicationContext(), "Logged In", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(getApplicationContext(), "Wrong email or Password", Toast.LENGTH_SHORT).show();
             }
         });
     }
