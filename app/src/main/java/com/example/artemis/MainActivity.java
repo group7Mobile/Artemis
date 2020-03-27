@@ -86,7 +86,17 @@ public class MainActivity extends AppCompatActivity {
         currentStateDatabaseHelper = new CurrentStateDatabaseHelper(this);
         historyDBHelper = new HistoryDBHelper(this);
         viewer.setWebViewClient(new WebViewClient());
-        viewer.setWebChromeClient(new ChromeClient());
+        viewer.setWebChromeClient(new ChromeClient() {
+            public void onProgressChanged(WebView view, int progress) {
+                if (progress < 100 && pg.getVisibility() == ProgressBar.GONE) {
+                    pg.setVisibility(ProgressBar.VISIBLE);
+                }
+                pg.setProgress(progress);
+                if (progress == 100) {
+                    pg.setVisibility(ProgressBar.GONE);
+                }
+            }
+        });
         viewer.getSettings().setUseWideViewPort(true);
         viewer.getSettings().setLoadWithOverviewMode(true);
         viewer.getSettings().setJavaScriptEnabled(true);
@@ -110,18 +120,6 @@ public class MainActivity extends AppCompatActivity {
                     go(null);
                 }
                 return false;
-            }
-        });
-
-        viewer.setWebChromeClient(new WebChromeClient() {
-            public void onProgressChanged(WebView view, int progress) {
-                if (progress < 100 && pg.getVisibility() == ProgressBar.GONE) {
-                    pg.setVisibility(ProgressBar.VISIBLE);
-                }
-                pg.setProgress(progress);
-                if (progress == 100) {
-                    pg.setVisibility(ProgressBar.GONE);
-                }
             }
         });
     }
