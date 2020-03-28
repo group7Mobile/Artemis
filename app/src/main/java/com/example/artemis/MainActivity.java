@@ -32,11 +32,16 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -51,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView xross;
     private TextView hdr;
     private FavDialog favDialog;
+    private Filters filter;
+    FilterWordsDBhelper filterWords;
     private ProgressBar pg;
     private ArrayList<String> blockedList;
     private ConstraintLayout constraintLayout; //for background colour
@@ -62,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     HistoryDBHelper historyDBHelper;
     static final String savedUrl = "url";
     String password;
+    private ArrayList<String> filterWordsList;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -82,9 +90,10 @@ public class MainActivity extends AppCompatActivity {
         xrossInvisible(null);
         favDatabaseHelper = new FavDatabaseHelper(this);
         hpDatabaseHelper = new HPDatabaseHelper(this);
-        historyDBHelper = new HistoryDBHelper(this);
         currentStateDatabaseHelper = new CurrentStateDatabaseHelper(this);
         historyDBHelper = new HistoryDBHelper(this);
+        filterWords = new FilterWordsDBhelper(this);
+        filterWordsList=new ArrayList<String>();
         viewer.setWebViewClient(new WebViewClient());
         viewer.setWebChromeClient(new ChromeClient() {
             public void onProgressChanged(WebView view, int progress) {
@@ -102,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
         viewer.getSettings().setJavaScriptEnabled(true);
         viewer.getSettings().setBuiltInZoomControls(true);
         viewer.getSettings().setDisplayZoomControls(false);
-        historyDBHelper = new HistoryDBHelper(this);
         constraintLayout = findViewById(R.id.constraintLayout);
         //Gets the background theme from SharedPreferences:
         SharedPreferences sharedPref = getSharedPreferences("bg", Context.MODE_PRIVATE);
@@ -230,37 +238,44 @@ public class MainActivity extends AppCompatActivity {
             historyDBHelper.addData(addressBar.getText().toString());
             filterUrl(addressBar.getText().toString());
         }
-        viewer.loadUrl(tempUrl);
-        xrossInvisible(null);
-        viewer.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                dialogUrl = url;
-                if (isBlocked(url)) {
-                    viewer.loadUrl("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg");
+        String URLin=addressBar.getText().toString();
+        String text=getTextFromWWW(URLin);
+        getFilterWords();
+        if(checkPage(text,filterWordsList)){
+            viewer.loadUrl(tempUrl);
+            xrossInvisible(null);
+            viewer.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                    super.onPageStarted(view, url, favicon);
+                    dialogUrl = url;
+                    if (isBlocked(url)) {
+                        viewer.loadUrl("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg");
+                    }
+                }
+                @Override
+                public void onPageFinished(WebView view1, String url) {
+                    super.onPageFinished(view1, url);
+                    if (!viewer.getUrl().equals("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg")) {
+                        hdr.setText(viewer.getTitle());
+                        addressBar.setText(viewer.getUrl());
+                    } else {
+                        hdr.setText(R.string.not_allowed);
+                        addressBar.getText().clear();
+                    }
+                }
+            });
+            View view = this.getCurrentFocus();
+            if(view != null) {
+                InputMethodManager inm = (InputMethodManager)
+                        getSystemService((Activity.INPUT_METHOD_SERVICE));
+                if (inm != null) {
+                    inm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             }
-            @Override
-            public void onPageFinished(WebView view1, String url) {
-                super.onPageFinished(view1, url);
-                if (!viewer.getUrl().equals("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg")) {
-                    hdr.setText(viewer.getTitle());
-                    addressBar.setText(viewer.getUrl());
-                } else {
-                    hdr.setText(R.string.not_allowed);
-                    addressBar.getText().clear();
-                }
-            }
-        });
-        View view = this.getCurrentFocus();
-        if(view != null) {
-            InputMethodManager inm = (InputMethodManager)
-                    getSystemService((Activity.INPUT_METHOD_SERVICE));
-            if (inm != null) {
-                inm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
-        }
+        }else hdr.setText(R.string.not_allowed);
+
+
     }
 
     public void refresh(View v) {
@@ -447,7 +462,18 @@ public class MainActivity extends AppCompatActivity {
         cursor.close();
         db.close();
     }
-
+    public void getFilterWords() {
+        SQLiteDatabase db = filterWords.getReadableDatabase();
+        String selectString = "SELECT * FROM filter_table";
+        Cursor cursor = db.rawQuery(selectString, null);
+        if (cursor.moveToFirst()) {
+            do {
+                filterWordsList.add(cursor.getString(cursor.getColumnIndex("words")));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+    }
     public String filterBlocked(String s) {
         if (s.toLowerCase().startsWith("http://")) {
             return s.substring(7);
@@ -557,5 +583,29 @@ public class MainActivity extends AppCompatActivity {
             flag = true;
         }
         return flag;
+    }
+    public String getTextFromWWW(String URLin) {
+        try {
+            URL url = new URL(URLin);
+            URLConnection connection = url.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String text = in.readLine();
+            in.close();
+
+            return text;
+
+        } catch (Exception e) {
+            return "Error > " + e.getMessage();
+
+        }
+    }
+    public boolean checkPage(String text, ArrayList<String> filterWordsList){
+        filterWordsList=this.filterWordsList;
+        for(int i=0;i<filterWordsList.size();i++){
+            String a = (String) filterWordsList.get(i);
+            if(text.contains(a)){
+                return false;
+            }
+        }return true;
     }
 }
