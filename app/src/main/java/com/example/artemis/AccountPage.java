@@ -16,7 +16,7 @@ import android.widget.Toast;
 public class AccountPage extends AppCompatActivity {
 
     EditText e1, e2, e3;
-    Button b1, b2;
+    Button b1, b2, b3;
     AccountDatabaseHelper db;
 
     @Override
@@ -28,6 +28,7 @@ public class AccountPage extends AppCompatActivity {
         e3 = (EditText)findViewById(R.id.editText5);
         b1 = (Button)findViewById(R.id.button9);
         b2 = (Button)findViewById(R.id.button35);
+        b3 = (Button) findViewById(R.id.button29);
         db = new AccountDatabaseHelper(this);
 
         b1.setOnClickListener(new View.OnClickListener() {
@@ -49,8 +50,9 @@ public class AccountPage extends AppCompatActivity {
                         } else {
                             Toast.makeText(getApplicationContext(), "Email already exists", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Password do not match", Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(getApplicationContext(), "Password do not match", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -60,6 +62,13 @@ public class AccountPage extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(AccountPage.this, Account_Login.class);
                 startActivity(intent);
+            }
+        });
+
+        b3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Logged Out", Toast.LENGTH_SHORT).show();
             }
         });
     }
