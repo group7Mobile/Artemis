@@ -51,9 +51,12 @@ public class Settings extends AppCompatActivity {
     }
 
     public void favourites(View v) {
-        Intent goFavourites = new Intent(Settings.this, Favourites.class);
+        Intent goRecycler = new Intent(this, Favourites.class);
+        startActivity(goRecycler);
+
+        /*Intent goFavourites = new Intent(Settings.this, Favourites.class);
         goFavourites.putExtra(Intent.EXTRA_TEXT, 2);
-        startActivity(goFavourites);
+        startActivity(goFavourites);*/
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)

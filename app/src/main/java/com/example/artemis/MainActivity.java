@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     static final String savedUrl = "url";
     String password;
     private ArrayList<String> filterWordsList;
+    private String favouriteClicked;
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -117,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
         int savedBg = sharedPref.getInt("bg", R.color.colorBG1);
         constraintLayout.setBackgroundColor(ContextCompat.getColor(this, savedBg));
 
-
         if (savedInstanceState != null) {
             home = savedInstanceState.getString(savedUrl);
         }
@@ -132,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        //Check if a favourite was clicked and if so, go to favourite:
+        goToFavourite();
     }
 
     @Override
@@ -607,5 +609,42 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         }return true;
+    }
+
+    /*
+     * Method for getting data passed from Favourites class when a favourite is clicked.
+     */
+    public void goToFavourite() {
+        if (getIntent().hasExtra("favourites")) {
+            favouriteClicked = getIntent().getStringExtra("favourites");
+            if (favouriteClicked.startsWith("www")) {
+                favouriteClicked = "https://" + favouriteClicked;
+            } else if (!favouriteClicked.startsWith("http")) {
+                favouriteClicked = "https://www." + favouriteClicked;
+            }
+
+            viewer.loadUrl(favouriteClicked);
+            addressBar.setText(home);
+            xrossInvisible(null);
+            viewer.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                    super.onPageStarted(view, url, favicon);
+                    if (isBlocked(url)) {
+                        viewer.loadUrl("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg");
+                    }
+                }
+                @Override
+                public void onPageFinished(WebView view1, String url) {
+                    super.onPageFinished(view1, url);
+                    if (!viewer.getUrl().equals("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg")) {
+                        hdr.setText(viewer.getTitle());
+                        addressBar.setText(viewer.getUrl());
+                    } else {
+                        hdr.setText(R.string.not_allowed);
+                    }
+                }
+            });
+        }
     }
 }
