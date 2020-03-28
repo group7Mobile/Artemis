@@ -1,17 +1,13 @@
 package com.example.artemis;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.accounts.Account;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 
 public class AccountPage extends AppCompatActivity {
 
@@ -72,7 +68,6 @@ public class AccountPage extends AppCompatActivity {
             }
         });
     }
-
 
     public void mainPage(View v) {
         finish();
