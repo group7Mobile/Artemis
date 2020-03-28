@@ -40,7 +40,7 @@ public class Favourites extends AppCompatActivity {
 
         arrayList = new ArrayList<>();
         //arrayList = dbHelper.retrieveTitlesFromDatabase();
-        arrayList = dbHelper.retrieveLinksFromDatabase();
+        arrayList = dbHelper.retrieveTitlesFromDatabase();
 
         recyclerAdapter = new RecyclerAdapter(this, arrayList);
 
@@ -83,7 +83,7 @@ public class Favourites extends AppCompatActivity {
             Toast toast = Toast.makeText(this, "Please enter a URL", duration);
             toast.show();
         } else {
-            arrayList.add(link);
+            arrayList.add(ttl);
             addToDatabase(ttl, link);
             recyclerAdapter.notifyDataSetChanged();
         }

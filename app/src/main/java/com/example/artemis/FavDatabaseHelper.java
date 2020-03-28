@@ -55,7 +55,7 @@ public class FavDatabaseHelper extends SQLiteOpenHelper {
     public ArrayList<String> retrieveLinksFromDatabase() {
         ArrayList<String> arrayList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        String selectString = "SELECT * FROM favs_table";
+        String selectString = "SELECT Url FROM favs_table";
         Cursor cursor = db.rawQuery(selectString, null);
         if (cursor.moveToFirst()) {
             do {
@@ -65,5 +65,18 @@ public class FavDatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return arrayList;
+    }
+
+    public String retrieveLinkByTitle(String s) {
+        String link = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectString = "SELECT * FROM favs_table WHERE Title = ?";
+        Cursor cursor = db.rawQuery(selectString, new String[] {s});
+        if (cursor.moveToFirst()) {
+            link = cursor.getString(cursor.getColumnIndex("Url"));
+        }
+        cursor.close();
+        db.close();
+        return link;
     }
 }
