@@ -88,7 +88,8 @@ public class MainActivity extends AppCompatActivity {
         blackListDatabaseHelper = new BlackListDatabaseHelper(this);
         blockedList = new ArrayList<>();
         blockedList = blackListDatabaseHelper.retrieveLinksFromDatabase();
-        //getBlockedSites();
+        getBlockedSites();
+        getFilterWords();
         xrossInvisible(null);
         favDatabaseHelper = new FavDatabaseHelper(this);
         hpDatabaseHelper = new HPDatabaseHelper(this);
@@ -172,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        getFilterWords();
         if (isFullScreen()) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
@@ -253,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void go(final View v) {
         getBlockedSites();
+        getBlockedSites();
         if (v != null) {
             historyDBHelper.addData(addressBar.getText().toString());
             filterUrl(addressBar.getText().toString());
@@ -299,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void refresh(View v) {
         getBlockedSites();
+        getBlockedSites();
         viewer.reload();
         viewer.setWebViewClient(new WebViewClient() {
             @Override
@@ -323,6 +327,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void gobackPage(View v) {
+        getBlockedSites();
         getBlockedSites();
         if (viewer.canGoBack()) {
             viewer.goBack();
@@ -350,6 +355,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goForwardPage(View v) {
+        getBlockedSites();
         getBlockedSites();
         if (viewer.canGoForward()) {
             viewer.goForward();
@@ -382,6 +388,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void homeP(View v) {
+        getBlockedSites();
         getBlockedSites();
         if (retreiveFromHPDB() == null) {
             tempUrl = "";
