@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         filterWordsList=new ArrayList<String>();
         viewer.setWebViewClient(new WebViewClient());
         Bundle getStateWebPage = getIntent().getExtras();
-        if (getStateWebPage != null && getStateWebPage.getString(Intent.EXTRA_TEXT).equals("set")) {
+        if (getStateWebPage != null && getStateWebPage.getString(Intent.EXTRA_TEXT) != null) {
             tempUrl = retrieveFromCurrentStateDB();
             go(null);
         }
