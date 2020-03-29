@@ -88,8 +88,6 @@ public class MainActivity extends AppCompatActivity {
         blackListDatabaseHelper = new BlackListDatabaseHelper(this);
         blockedList = new ArrayList<>();
         blockedList = blackListDatabaseHelper.retrieveLinksFromDatabase();
-        getBlockedSites();
-        getFilterWords();
         xrossInvisible(null);
         favDatabaseHelper = new FavDatabaseHelper(this);
         hpDatabaseHelper = new HPDatabaseHelper(this);
@@ -157,6 +155,8 @@ public class MainActivity extends AppCompatActivity {
         }*/
         //Check if a favourite was clicked and if so, go to favourite:
         goToFavourite();
+        getBlockedSites();
+        getFilterWords();
     }
 
     @Override
