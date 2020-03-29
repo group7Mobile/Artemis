@@ -240,6 +240,7 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void go(final View v) {
+        getBlockedSites();
         if (v != null) {
             historyDBHelper.addData(addressBar.getText().toString());
             filterUrl(addressBar.getText().toString());
@@ -285,6 +286,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void refresh(View v) {
+        getBlockedSites();
         viewer.reload();
         viewer.setWebViewClient(new WebViewClient() {
             @Override
@@ -309,6 +311,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void gobackPage(View v) {
+        getBlockedSites();
         if (viewer.canGoBack()) {
             viewer.goBack();
             viewer.setWebViewClient(new WebViewClient() {
@@ -335,6 +338,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goForwardPage(View v) {
+        getBlockedSites();
         if (viewer.canGoForward()) {
             viewer.goForward();
             viewer.setWebViewClient(new WebViewClient() {
@@ -366,6 +370,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void homeP(View v) {
+        getBlockedSites();
         if (retreiveFromHPDB() == null) {
             tempUrl = "";
         } else {
