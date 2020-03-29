@@ -85,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         historyDBHelper = new HistoryDBHelper(this);
         currentStateDatabaseHelper = new CurrentStateDatabaseHelper(this);
         historyDBHelper = new HistoryDBHelper(this);
-        viewer.setWebViewClient(new WebViewClient());
         viewer.setWebChromeClient(new ChromeClient() {
             public void onProgressChanged(WebView view, int progress) {
                 if (progress < 100 && pg.getVisibility() == ProgressBar.GONE) {
@@ -95,6 +94,11 @@ public class MainActivity extends AppCompatActivity {
                 if (progress == 100) {
                     pg.setVisibility(ProgressBar.GONE);
                 }
+            }
+
+            public void onReceivedTitle (WebView view, String title) {
+                hdr.setText(title);
+                addressBar.setText(viewer.getUrl());
             }
         });
         viewer.getSettings().setUseWideViewPort(true);
@@ -237,6 +241,7 @@ public class MainActivity extends AppCompatActivity {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 dialogUrl = url;
+                hdr.setText(viewer.getTitle());
                 if (isBlocked(url)) {
                     viewer.loadUrl("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg");
                 }
