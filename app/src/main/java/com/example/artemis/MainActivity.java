@@ -87,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
         dialogUrl = "";
         blackListDatabaseHelper = new BlackListDatabaseHelper(this);
         blockedList = new ArrayList<>();
-        getBlockedSites();
+        blockedList = blackListDatabaseHelper.retrieveLinksFromDatabase();
+        //getBlockedSites();
         xrossInvisible(null);
         favDatabaseHelper = new FavDatabaseHelper(this);
         hpDatabaseHelper = new HPDatabaseHelper(this);
@@ -142,6 +143,17 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        /////////////////////////////
+/*        Bundle getFromFavs = getIntent().getExtras();
+        if (getFromFavs != null) {
+            if (!Objects.equals(getFromFavs.getString(Intent.EXTRA_RETURN_RESULT), "")) {
+                tempUrl = getFromFavs.getString(Intent.EXTRA_RETURN_RESULT);
+            } else {
+                tempUrl = retrieveFromCurrentStateDB();
+            }
+            addressBar.setText(tempUrl);
+            go(null);
+        }*/
         //Check if a favourite was clicked and if so, go to favourite:
         goToFavourite();
     }
@@ -449,8 +461,8 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor = db.rawQuery(selectString, null);
         if (cursor.moveToFirst()) {
             do {
-                blockedList.add(filterBlocked(cursor
-                        .getString(cursor.getColumnIndex("Url"))));
+                blockedList.add(cursor
+                        .getString(cursor.getColumnIndex("Url")));
             } while (cursor.moveToNext());
         }
         cursor.close();
