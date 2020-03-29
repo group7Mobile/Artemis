@@ -25,6 +25,7 @@ public class BlackList extends AppCompatActivity {
     private EditText urlInput;
     private EditText titleInput;
     private ArrayList<String> arrayList;
+    private ArrayList<String> urlList;
     private BlacklistAdapter recyclerAdapter;
     String pageId =null;
 
@@ -41,6 +42,8 @@ public class BlackList extends AppCompatActivity {
 
         arrayList = new ArrayList<>();
         arrayList = dbHelper.retrieveTitlesFromDatabase();
+        urlList = new ArrayList<>();
+        urlList = dbHelper.retrieveLinksFromDatabase();
 
         recyclerAdapter = new BlacklistAdapter(this, arrayList);
 
@@ -101,20 +104,6 @@ public class BlackList extends AppCompatActivity {
         db.close();
     }
 
-    public void removeFavourite(String favourite) {
-        if(arrayList.size()==0){
-            return;
-        } else if (!arrayList.contains(favourite)) {
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(this, "Not in favourites. Please enter a valid title", duration);
-            toast.show();
-        } else {
-            arrayList.remove(favourite);
-            recyclerAdapter.notifyDataSetChanged();
-            removeFromDatabase(favourite);
-        }
-    }
-
     public void removeFromDatabase(String id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete("bl_table", "Title = ?", new String[] {id});
@@ -126,23 +115,5 @@ public class BlackList extends AppCompatActivity {
         String selectString = "SELECT * FROM bl_table where Title = " + title;
         Cursor cursor = db.rawQuery(selectString, null);
         return cursor.getString(cursor.getColumnIndex("Url"));
-    }
-
-    public void mainPage(View v) {
-        /**
-         Bundle getterFav = getIntent().getExtras();
-         if (getterFav != null) {
-         int res = getterFav.getInt(Intent.EXTRA_TEXT);
-         if (res == 1) {
-         finish();
-         } else {
-         if (res == 2) {
-         Intent goMainPage1 = new Intent(this, Settings.class);
-         startActivity(goMainPage1);
-         }
-         }
-         }
-         **/
-        finish();
     }
 }
