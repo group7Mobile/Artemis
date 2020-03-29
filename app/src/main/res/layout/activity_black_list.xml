@@ -42,7 +42,7 @@
         android:layout_marginTop="18dp"
         android:ems="10"
         android:hint="Title"
-        android:inputType="textUri"
+        android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView171" />
 
@@ -54,7 +54,7 @@
         android:layout_marginLeft="16dp"
         android:ems="10"
         android:hint="Website url"
-        android:inputType="textPersonName"
+        android:inputType="textUri"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextTitle11" />
 

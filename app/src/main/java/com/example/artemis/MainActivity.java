@@ -445,7 +445,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getBlockedSites() {
         SQLiteDatabase db = blackListDatabaseHelper.getReadableDatabase();
-        String selectString = "SELECT * FROM bl_table";
+        String selectString = "SELECT * FROM bl_table;";
         Cursor cursor = db.rawQuery(selectString, null);
         if (cursor.moveToFirst()) {
             do {
@@ -495,7 +495,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean isBlocked(String s) {
         boolean result = false;
         for (int i = 0; i < blockedList.size(); i++) {
-            if (s.contains(blockedList.get(i))) {
+            if (s.contains(blockedList.get(i)) || blockedList.get(i).contains(s)) {
                 result =  true;
                 break;
             }
