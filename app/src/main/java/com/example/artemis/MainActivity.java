@@ -196,18 +196,13 @@ public class MainActivity extends AppCompatActivity {
                     public void onDismiss(DialogInterface dialog) {
                         if (favDialog.getResult()) {
                              if (favDialog.isHp()) {
-                             try {
-                             hpDatabaseHelper.rePopulate(dialogUrl);
-                             } catch (Exception e) {
-                             hpDatabaseHelper.addData(dialogUrl);
+                                 addToHPDB(dialogUrl);
                              }
-                             }
-
                              Handler handler1 = new Handler();
                              handler1.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                home = hpDatabaseHelper.getHomePage();
+                                home = retreiveFromHPDB();
                             }
                             },200);
 
@@ -371,24 +366,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void homeP(View v) {
-        String homePage = "";
-        try {
-            homePage = hpDatabaseHelper.getHomePage();
-        } catch (Exception e) {
-
-        }
-        if (homePage.equals("")) {
-            try {
-                SharedPreferences getSavedHP;
-                getSavedHP = getSharedPreferences("SAVED_URL", Context.MODE_PRIVATE);
-                home = getSavedHP.getString("MEM-URL", "");
-            } catch (Exception e) {
-            }
+        if (retreiveFromHPDB() == null) {
+            tempUrl = "";
         } else {
-            home = homePage;
+            tempUrl = "http://" + filterBlocked(retreiveFromHPDB());
         }
-        viewer.loadUrl(home);
-        addressBar.setText(home);
+        go(null);
         xrossInvisible(null);
         viewer.setWebViewClient(new WebViewClient() {
             @Override
@@ -527,6 +510,30 @@ public class MainActivity extends AppCompatActivity {
         values.put("current", s);
         db.insert("current_state", null, values);
         db.close();
+    }
+
+    public void addToHPDB(String s) {
+        SQLiteDatabase db = hpDatabaseHelper.getWritableDatabase();
+        hpDatabaseHelper.clearTable(db);
+        ContentValues values = new ContentValues();
+        values.put("Url", s);
+        db.insert("hp_table", null, values);
+        db.close();
+    }
+
+    public String retreiveFromHPDB() {
+        SQLiteDatabase db = hpDatabaseHelper.getReadableDatabase();
+        String select = "SELECT * FROM hp_table;";
+        String returnHP = "";
+        Cursor cursor = db.rawQuery(select, null);
+        if (cursor.moveToFirst()) {
+            do {
+                returnHP = cursor.getString(cursor.getColumnIndex("Url"));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return returnHP;
     }
 
     public String retrieveFromCurrentStateDB() {
