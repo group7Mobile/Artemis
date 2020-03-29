@@ -16,32 +16,30 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.RecyclerViewHolder> {
+public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.BlacklistViewHolder> {
     ArrayList<String> favourites;
     Context context;
 
-    public RecyclerAdapter(Context context, ArrayList<String> s1) {
+    public BlacklistAdapter(Context context, ArrayList<String> s1) {
         this.context = context;
         favourites = s1;
     }
 
     @NonNull
     @Override
-    public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public BlacklistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.recycler_row, parent,false);
-        return new RecyclerViewHolder(view);
+        return new BlacklistViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull BlacklistViewHolder holder, final int position) {
         holder.myText.setText(favourites.get(position));
         holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, MainActivity.class);
-                intent.putExtra("favourites", favourites.get(position));
-                context.startActivity(intent);
+                //Do nothing
             }
         });
         holder.constraintLayout.setOnLongClickListener(new View.OnLongClickListener() {
@@ -53,10 +51,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                 builder.setItems(item, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
-                        FavDatabaseHelper dbHelper = new FavDatabaseHelper(context);
+                        BlackListDatabaseHelper dbHelper = new BlackListDatabaseHelper(context);
                         SQLiteDatabase db = dbHelper.getWritableDatabase();
                         String deleted = favourites.get(position);
-                        db.delete("favs_table", "Title = ?", new String[] {deleted});
+                        db.delete("bl_table", "Title = ?", new String[] {deleted});
                         db.close();
                         favourites.remove(position);
                         notifyDataSetChanged();
@@ -73,11 +71,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
         return favourites.size();
     }
 
-    public class RecyclerViewHolder extends RecyclerView.ViewHolder {
+    public class BlacklistViewHolder extends RecyclerView.ViewHolder {
         TextView myText;
         ConstraintLayout constraintLayout;
 
-        public RecyclerViewHolder(@NonNull View itemView) {
+        public BlacklistViewHolder(@NonNull View itemView) {
             super(itemView);
             myText = itemView.findViewById(R.id.myTextview);
             constraintLayout = itemView.findViewById(R.id.rowLayout);

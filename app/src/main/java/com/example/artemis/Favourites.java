@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,10 +37,9 @@ public class Favourites extends AppCompatActivity {
         urlInput = findViewById(R.id.editText3);
         titleInput = findViewById(R.id.editTextTitle);
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView11);
 
         arrayList = new ArrayList<>();
-        //arrayList = dbHelper.retrieveTitlesFromDatabase();
         arrayList = dbHelper.retrieveTitlesFromDatabase();
 
         recyclerAdapter = new RecyclerAdapter(this, arrayList);
@@ -56,13 +56,6 @@ public class Favourites extends AppCompatActivity {
                 addFavourite(newItem, newItem2);
             }
         });
-        Button btnPop = findViewById(R.id.button24);
-        btnPop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeFavourite();
-            }
-        });
         Bundle getIntent = getIntent().getExtras();
         if (getIntent != null && getIntent.getInt(Intent.EXTRA_TEXT) != 1 && getIntent.getInt(Intent.EXTRA_TEXT) != 2) {
             String title = getIntent.getString(Intent.EXTRA_TITLE);
@@ -71,6 +64,13 @@ public class Favourites extends AppCompatActivity {
             finish();
         }
     }
+
+/*    @Override
+    public void onBackPressed() {
+        Context context = getApplicationContext();
+        Intent intent = new Intent(context, Settings.class);
+        context.startActivity(intent);
+    }*/
 
     public void addFavourite(String ttl, String link) {
         //every time add an item, add it in the top of stack by adding it to the 0 index of the arrayList
@@ -101,17 +101,17 @@ public class Favourites extends AppCompatActivity {
         db.close();
     }
 
-    public void removeFavourite() {
+    public void removeFavourite(String favourite) {
         if(arrayList.size()==0){
             return;
-        } else if (!arrayList.contains(titleInput.getText().toString())) {
+        } else if (!arrayList.contains(favourite)) {
             int duration = Toast.LENGTH_SHORT;
             Toast toast = Toast.makeText(this, "Not in favourites. Please enter a valid title", duration);
             toast.show();
         } else {
-            arrayList.remove(titleInput.getText().toString());
+            arrayList.remove(favourite);
             recyclerAdapter.notifyDataSetChanged();
-            removeFromDatabase(titleInput.getText().toString());
+            removeFromDatabase(favourite);
         }
     }
 

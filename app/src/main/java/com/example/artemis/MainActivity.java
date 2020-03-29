@@ -450,7 +450,7 @@ public class MainActivity extends AppCompatActivity {
         if (cursor.moveToFirst()) {
             do {
                 blockedList.add(filterBlocked(cursor
-                        .getString(cursor.getColumnIndex("URL"))));
+                        .getString(cursor.getColumnIndex("Url"))));
             } while (cursor.moveToNext());
         }
         cursor.close();
