@@ -637,36 +637,8 @@ public class MainActivity extends AppCompatActivity {
             String link = helper.retrieveLinkByTitle(favouriteClicked);
 
             if (link != null) {
-                if (link.startsWith("www")) {
-                    link = "https://" + link;
-                } else if (!link.startsWith("http")) {
-                    link = "https://www." + link;
-                }
-
-                viewer.loadUrl(link);
-                System.out.println(link);
-                addressBar.setText(home);
-                xrossInvisible(null);
-                viewer.setWebViewClient(new WebViewClient() {
-                    @Override
-                    public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                        super.onPageStarted(view, url, favicon);
-                        if (isBlocked(url)) {
-                            viewer.loadUrl("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg");
-                        }
-                    }
-
-                    @Override
-                    public void onPageFinished(WebView view1, String url) {
-                        super.onPageFinished(view1, url);
-                        if (!viewer.getUrl().equals("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg")) {
-                            hdr.setText(viewer.getTitle());
-                            addressBar.setText(viewer.getUrl());
-                        } else {
-                            hdr.setText(R.string.not_allowed);
-                        }
-                    }
-                });
+                tempUrl = link;
+                go(null);
             }
         }
     }
