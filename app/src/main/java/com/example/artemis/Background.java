@@ -18,6 +18,7 @@ public class Background extends AppCompatActivity {
     private Button d;
     private Button e;
     private Button f;
+    private boolean isUpdated;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +30,17 @@ public class Background extends AppCompatActivity {
         d = findViewById(R.id.button23);
         e = findViewById(R.id.button24);
         f = findViewById(R.id.button25);
+        isUpdated = false;
     }
 
     public void mainPage(View v) {
-        finish();
+        if (isUpdated) {
+            Intent goToMainPage = new Intent(Background.this, MainActivity.class);
+            goToMainPage.putExtra(Intent.EXTRA_TEXT, "set");
+            startActivity(goToMainPage);
+        } else {
+            finish();
+        }
     }
 
     public void changeA(View view) {
@@ -40,6 +48,7 @@ public class Background extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt("bg", R.color.colorBG1);
         editor.commit();
+        isUpdated = true;
         showToast();
     }
 
@@ -48,6 +57,7 @@ public class Background extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt("bg", R.color.colorBG2);
         editor.commit();
+        isUpdated = true;
         showToast();
     }
 
@@ -56,6 +66,7 @@ public class Background extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt("bg", R.color.colorBG3);
         editor.commit();
+        isUpdated = true;
         showToast();
     }
 
@@ -64,6 +75,7 @@ public class Background extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt("bg", R.color.colorBG4);
         editor.commit();
+        isUpdated = true;
         showToast();
     }
 
@@ -72,6 +84,7 @@ public class Background extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt("bg", R.color.colorBG5);
         editor.commit();
+        isUpdated = true;
         showToast();
     }
 
@@ -80,6 +93,7 @@ public class Background extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt("bg", R.color.colorBG6);
         editor.commit();
+        isUpdated = true;
         showToast();
     }
 

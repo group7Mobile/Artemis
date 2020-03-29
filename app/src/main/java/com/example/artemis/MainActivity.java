@@ -96,6 +96,11 @@ public class MainActivity extends AppCompatActivity {
         filterWords = new FilterWordsDBhelper(this);
         filterWordsList=new ArrayList<String>();
         viewer.setWebViewClient(new WebViewClient());
+        Bundle getStateWebPage = getIntent().getExtras();
+        if (getStateWebPage != null && getStateWebPage.getString(Intent.EXTRA_TEXT).equals("set")) {
+            tempUrl = retrieveFromCurrentStateDB();
+            go(null);
+        }
         viewer.setWebChromeClient(new ChromeClient() {
             public void onProgressChanged(WebView view, int progress) {
                 if (progress < 100 && pg.getVisibility() == ProgressBar.GONE) {
@@ -223,16 +228,15 @@ public class MainActivity extends AppCompatActivity {
     public void settings(View v) {
         SharedPreferences settings = getSharedPreferences("PREFS", 0);
         password = settings.getString("password", "");
+        addToCurrentStateDB(viewer.getUrl());
         if(password.equals("")){
             // If there is no password
-            addToCurrentStateDB(viewer.getUrl());
             Intent goSettings = new Intent(this, Passwords.class);
             goSettings.putExtra(Intent.EXTRA_REFERRER, 1);
             startActivity(goSettings);
             xrossInvisible(null);
         } else {
             // If there is a password
-            addToCurrentStateDB(viewer.getUrl());
             Intent goSettings2 = new Intent(this, EnterPassword.class);
             startActivity(goSettings2);
             xrossInvisible(null);

@@ -53,6 +53,7 @@ public class HPDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public String getHomePage() {
+        String returnHP = "";
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT Url FROM " + TABLE_NAME;
         Cursor cursor = db.rawQuery(query, null);
@@ -66,7 +67,10 @@ public class HPDatabaseHelper extends SQLiteOpenHelper {
             }while(cursor.moveToNext());
         }
         cursor.close();
-        return strings.get(0);
+        try {
+            returnHP =  strings.get(0);
+        } catch (Exception e) {}
+        return returnHP;
     }
 
     public int rePopulate(String lk) {
