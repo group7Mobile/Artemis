@@ -2,11 +2,7 @@ package com.example.artemis;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.accounts.Account;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +12,7 @@ import android.widget.Toast;
 public class AccountPage extends AppCompatActivity {
 
     EditText e1, e2, e3;
-    Button b1, b2;
+    Button b1, b2, b3;
     AccountDatabaseHelper db;
 
     @Override
@@ -28,6 +24,7 @@ public class AccountPage extends AppCompatActivity {
         e3 = (EditText)findViewById(R.id.editText5);
         b1 = (Button)findViewById(R.id.button9);
         b2 = (Button)findViewById(R.id.button35);
+        b3 = (Button) findViewById(R.id.button29);
         db = new AccountDatabaseHelper(this);
 
         b1.setOnClickListener(new View.OnClickListener() {
@@ -49,8 +46,9 @@ public class AccountPage extends AppCompatActivity {
                         } else {
                             Toast.makeText(getApplicationContext(), "Email already exists", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Password do not match", Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(getApplicationContext(), "Password do not match", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -62,8 +60,14 @@ public class AccountPage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
 
+        b3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Logged Out", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     public void mainPage(View v) {
         finish();

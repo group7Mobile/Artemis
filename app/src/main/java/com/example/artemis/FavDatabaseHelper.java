@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 public class FavDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "FavDatabaseHelper";
@@ -35,34 +37,46 @@ public class FavDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean addData(String tt, String lk) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(COL2, tt);
-        contentValues.put(COL3, lk);
-
-        Log.d(DB_NAME, "addData: Adding " + tt + " to " + TABLE_NAME);
-
-        long result = db.insert(TABLE_NAME, null, contentValues);
-        if (result == -1) {
-            db.close();
-            return false;
-        } else {
-            db.close();
-            return true;
+    public ArrayList<String> retrieveTitlesFromDatabase() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectString = "SELECT * FROM favs_table";
+        Cursor cursor = db.rawQuery(selectString, null);
+        if (cursor.moveToFirst()) {
+            do {
+                arrayList.add(cursor.getString(cursor.getColumnIndex("Title")));
+            } while (cursor.moveToNext());
         }
-    }
-
-    public Cursor getData() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE_NAME;
-        Cursor data = db.rawQuery(query, null);
-        return data;
-    }
-
-    public void del(String url) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_NAME, "Url = ?", new String[] {url} );
+        cursor.close();
         db.close();
+        return arrayList;
+    }
+
+    public ArrayList<String> retrieveLinksFromDatabase() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectString = "SELECT Url FROM favs_table";
+        Cursor cursor = db.rawQuery(selectString, null);
+        if (cursor.moveToFirst()) {
+            do {
+                arrayList.add(cursor.getString(cursor.getColumnIndex("Url")));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return arrayList;
+    }
+
+    public String retrieveLinkByTitle(String s) {
+        String link = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectString = "SELECT * FROM favs_table WHERE Title = ?";
+        Cursor cursor = db.rawQuery(selectString, new String[] {s});
+        if (cursor.moveToFirst()) {
+            link = cursor.getString(cursor.getColumnIndex("Url"));
+        }
+        cursor.close();
+        db.close();
+        return link;
     }
 }
