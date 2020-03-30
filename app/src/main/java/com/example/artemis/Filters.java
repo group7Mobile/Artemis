@@ -14,8 +14,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -31,12 +33,23 @@ public class Filters extends AppCompatActivity {
     private FilterWordsDBhelper filterWords;
     public ArrayList<String> arrayList;
     String wordId= null;
+    public boolean status;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filters);
         filterWords = new FilterWordsDBhelper(this);
-
+        Switch sw = (Switch) findViewById(R.id.switch3);
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                boolean status = false;
+                if (isChecked) {
+                    status=true;
+                } else {
+                    status=false;
+                }
+            }
+        });
         RecyclerView recyclerView = findViewById(R.id.recyclerView2);
         arrayList = new ArrayList<>();
         arrayList = getFilterWords();
@@ -50,6 +63,7 @@ public class Filters extends AppCompatActivity {
             public void onClick(View v) {
                 txtInput = (EditText) findViewById(R.id.editText18);
                 String newItem = txtInput.getText().toString();
+
                 //every time add an item, add it in the top of stack by adding it to the 0 index of the arrayList
                 addTofilterDB(newItem);
                 recyclerAdapter.notifyDataSetChanged();
@@ -64,7 +78,9 @@ public class Filters extends AppCompatActivity {
     public ArrayList<String> getArrayList(){
         return arrayList;
     }
-
+    public boolean getStatus(){
+        return status;
+    }
     public void addTofilterDB(String word) {
         SQLiteDatabase db = filterWords.getWritableDatabase();
         ContentValues values = new ContentValues();
