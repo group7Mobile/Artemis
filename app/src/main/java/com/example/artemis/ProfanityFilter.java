@@ -47,7 +47,7 @@ public class ProfanityFilter {
 
     public static void loadStaticList() {
 
-        String[] listOfWords = {"sex", "porn", "wild"};
+        String[] listOfWords = {"sex", "porn", "wild", "mental"};
 
         String line = "";
         int counter = 0;
@@ -70,9 +70,9 @@ public class ProfanityFilter {
         input = input.toLowerCase().replaceAll("[^a-zA-Z]", "");
 
         // iterate over each letter in the word
-        for (int start = 0; start < input.length(); start++) {
+        for (int start = 0; start <= input.length(); start++) {
             // from each letter, keep going to find bad words until either the end of the sentence is reached, or the max word length is reached.
-            for (int offset = 1; offset < (input.length() + 1 - start) && offset < largestWordLength; offset++) {
+            for (int offset = 1; offset < (input.length() + 1 - start) && offset <= largestWordLength; offset++) {
                 String wordToCheck = input.substring(start, start + offset);
                 if (words.contains(wordToCheck)) {
                     badWords.add(wordToCheck);
