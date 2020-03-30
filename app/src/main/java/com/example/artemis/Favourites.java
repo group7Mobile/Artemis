@@ -37,7 +37,7 @@ public class Favourites extends AppCompatActivity {
         urlInput = findViewById(R.id.editText3);
         titleInput = findViewById(R.id.editTextTitle);
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView11);
 
         arrayList = new ArrayList<>();
         arrayList = dbHelper.retrieveTitlesFromDatabase();
@@ -144,13 +144,6 @@ public class Favourites extends AppCompatActivity {
          }
          **/
         finish();
-    }
-
-    public void onDelete() {
-        if (getIntent().hasExtra("delete")) {
-            String favouriteClicked = getIntent().getStringExtra("delete");
-            removeFavourite(favouriteClicked);
-        }
     }
 }
 
