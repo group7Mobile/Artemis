@@ -38,8 +38,6 @@
             android:parentActivityName=".Settings"/>
         <activity android:name=".Passwords"
             android:parentActivityName=".Settings"/>
-        <activity android:name=".Favourites"
-            android:parentActivityName=".Settings"/>
         <activity android:name=".Background"
             android:parentActivityName=".Settings"/>
         <activity android:name=".Shortcuts"

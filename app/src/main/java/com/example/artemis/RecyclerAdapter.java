@@ -1,7 +1,10 @@
 package com.example.artemis;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +42,28 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                 Intent intent = new Intent(context, MainActivity.class);
                 intent.putExtra("favourites", favourites.get(position));
                 context.startActivity(intent);
+            }
+        });
+        holder.constraintLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                String[] item = {"Delete"};
+                builder.setTitle("Select an action");
+                builder.setItems(item, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        FavDatabaseHelper dbHelper = new FavDatabaseHelper(context);
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
+                        String deleted = favourites.get(position);
+                        db.delete("favs_table", "Title = ?", new String[] {deleted});
+                        db.close();
+                        favourites.remove(position);
+                        notifyDataSetChanged();
+                    }
+                });
+                builder.show();
+                return true;
             }
         });
     }
