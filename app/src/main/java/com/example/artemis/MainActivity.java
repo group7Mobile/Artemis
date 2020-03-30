@@ -650,14 +650,16 @@ public class MainActivity extends AppCompatActivity {
         }
         return flag;
     }
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public String getTextFromWWW(String URLin) {
+        String text=" ";
+        //initiate the text to avoid stroage full
         try {
             URL url = new URL(URLin);
             URLConnection connection = url.openConnection();
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String text = in.readLine();
+            text = in.lines().collect(Collectors.joining());
             in.close();
-
             return text;
 
         } catch (Exception e) {
