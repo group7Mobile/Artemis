@@ -39,7 +39,6 @@ public class Filters extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filters);
         filterWords = new FilterWordsDBhelper(this);
-
         RecyclerView recyclerView = findViewById(R.id.recyclerView2);
         arrayList = new ArrayList<>();
         arrayList = getFilterWords();
@@ -94,5 +93,4 @@ public class Filters extends AppCompatActivity {
         db.close();
         return arrayList;
     }
-
 }

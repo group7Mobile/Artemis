@@ -21,7 +21,7 @@ public class FilterWordsDBhelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String createTable = "CREATE TABLE " + TABLE_NAME + " (" +
                 COL1 + " INTEGER PRIMARY KEY," +
-                COL2 + " words);";
+                COL2 + " TEXT);";
         db.execSQL(createTable);
     }
 

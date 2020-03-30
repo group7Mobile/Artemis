@@ -176,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        getBlockedSites();
         getFilterWords();
         if (isFullScreen()) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -211,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
                     @RequiresApi(api = Build.VERSION_CODES.M)
                     @Override
                     public void onDismiss(DialogInterface dialog) {
+                        favDialog.setTitle(favDialog.getTitleBoxText());
                         if (favDialog.getResult()) {
                              if (favDialog.isHp()) {
                                  addToHPDB(dialogUrl);
@@ -225,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
                             Intent intent = new Intent(MainActivity.this,
                                     Favourites.class);
-                            intent.putExtra(Intent.EXTRA_TITLE, titleFromWebView);
+                            intent.putExtra(Intent.EXTRA_TITLE, favDialog.getTitle());
                             intent.putExtra(Intent.EXTRA_PROCESS_TEXT, dialogUrl);
                             startActivity(intent);
                         }
@@ -238,6 +240,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void settings(View v) {
+        getBlockedSites();
+        getFilterWords();
         SharedPreferences settings = getSharedPreferences("PREFS", 0);
         password = settings.getString("password", "");
         addToCurrentStateDB(viewer.getUrl());
@@ -258,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void go(final View v) {
         getBlockedSites();
-        getBlockedSites();
+        getFilterWords();
         String url = addressBar.getText().toString();
         if (v != null) {
             if (ProfanityFilter.isBadString(url)) {
@@ -316,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void refresh(View v) {
         getBlockedSites();
-        getBlockedSites();
+        getFilterWords();
         viewer.reload();
         viewer.setWebViewClient(new WebViewClient() {
             @Override
@@ -342,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void gobackPage(View v) {
         getBlockedSites();
-        getBlockedSites();
+        getFilterWords();
         if (viewer.canGoBack()) {
             viewer.goBack();
             viewer.setWebViewClient(new WebViewClient() {
@@ -370,7 +374,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void goForwardPage(View v) {
         getBlockedSites();
-        getBlockedSites();
+        getFilterWords();
         if (viewer.canGoForward()) {
             viewer.goForward();
             viewer.setWebViewClient(new WebViewClient() {
@@ -398,12 +402,14 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void favorite(View v) {
+        getBlockedSites();
+        getFilterWords();
         openDialog();
     }
 
     public void homeP(View v) {
         getBlockedSites();
-        getBlockedSites();
+        getFilterWords();
         if (retreiveFromHPDB() == null) {
             tempUrl = "";
         } else {
@@ -433,6 +439,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void cancelpageLoad(View v) {
+        getBlockedSites();
+        getFilterWords();
         viewer.stopLoading();
     }
 
@@ -482,6 +490,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getBlockedSites() {
+        blockedList.clear();
         SQLiteDatabase db = blackListDatabaseHelper.getReadableDatabase();
         String selectString = "SELECT * FROM bl_table;";
         Cursor cursor = db.rawQuery(selectString, null);
@@ -495,6 +504,7 @@ public class MainActivity extends AppCompatActivity {
         db.close();
     }
     public void getFilterWords() {
+        filterWordsList.clear();
         SQLiteDatabase db = filterWords.getReadableDatabase();
         String selectString = "SELECT * FROM filter_table";
         Cursor cursor = db.rawQuery(selectString, null);

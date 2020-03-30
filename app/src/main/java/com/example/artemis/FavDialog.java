@@ -99,5 +99,9 @@ public class FavDialog extends AppCompatDialogFragment {
         return result;
     }
 
+    public String getTitleBoxText() {
+        return titleBox.getText().toString();
+    }
+
 
 }

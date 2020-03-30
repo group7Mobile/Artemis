@@ -116,4 +116,8 @@ public class BlackList extends AppCompatActivity {
         Cursor cursor = db.rawQuery(selectString, null);
         return cursor.getString(cursor.getColumnIndex("Url"));
     }
+
+    public void mainPage(View v) {
+        finish();
+    }
 }
