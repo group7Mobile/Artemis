@@ -22,6 +22,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -157,6 +158,8 @@ public class MainActivity extends AppCompatActivity {
         goToFavourite();
         getBlockedSites();
         getFilterWords();
+        ProfanityFilter.loadStaticList();
+
     }
 
     @Override
@@ -256,11 +259,22 @@ public class MainActivity extends AppCompatActivity {
     public void go(final View v) {
         getBlockedSites();
         getBlockedSites();
+        String url = addressBar.getText().toString();
         if (v != null) {
-            historyDBHelper.addData(addressBar.getText().toString());
-            filterUrl(addressBar.getText().toString());
+            if (ProfanityFilter.isBadString(url)) {
+
+                int duration = Toast.LENGTH_LONG;
+
+                Toast toast = Toast.makeText(getBaseContext(), "Restricted word searched by the browser. Validate your age", duration);
+                toast.setGravity(Gravity.CENTER | Gravity.CENTER, 0, 0);
+                toast.show();
+                addressBar.setText("");
+                return;
+            }
+            historyDBHelper.addData(url);
+            filterUrl(url);
         }
-        String URLin=addressBar.getText().toString();
+        String URLin= url;
         String text=getTextFromWWW(URLin);
         getFilterWords();
         if(checkPage(text,filterWordsList)){
