@@ -64,9 +64,9 @@ public class HistoryDBHelper extends SQLiteOpenHelper {
                 args));
     }
 
-    public void del(String url) {
+    public void del() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_NAME, "Url = ?", new String[] {url} );
-        db.close();
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        onCreate(db);
     }
 }
