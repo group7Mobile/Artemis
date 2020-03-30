@@ -659,6 +659,7 @@ public class MainActivity extends AppCompatActivity {
         filterWordsList=this.filterWordsList;
         for(int i=0;i<filterWordsList.size();i++){
             String a = (String) filterWordsList.get(i);
+            text=text.toLowerCase();
             if(text.contains(a)){
                 return false;
             }
