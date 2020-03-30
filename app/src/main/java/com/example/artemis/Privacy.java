@@ -1,8 +1,11 @@
 package com.example.artemis;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -12,18 +15,15 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 
 import android.widget.Button;
-
-import android.widget.ListView;
-
 import java.util.ArrayList;
 import java.util.Observable;
 
 public class Privacy extends AppCompatActivity {
-
+    private RecyclerAdapter recyclerAdapter;
     private HistoryDBHelper dbHelper;
     private ArrayList<String> arrayList;
-    private ListView listView;
-    private ArrayAdapter<String> adapter;
+    String historyId= null;
+    private SharedPreferences fav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,18 +31,19 @@ public class Privacy extends AppCompatActivity {
         setContentView(R.layout.activity_privacy);
         dbHelper = new HistoryDBHelper(this);
 
-        listView = findViewById(R.id.listviewH);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView3);
         arrayList = new ArrayList<>();
-
+        arrayList=getBrowserHist();
         //constructor of adapter to store input item separately in list_item and put them in list_view
-        adapter = new ArrayAdapter<String>(this, R.layout.list_item, R.id.txtitem, arrayList);
-        listView.setAdapter(adapter);
+        recyclerAdapter = new RecyclerAdapter(this, arrayList);
+        recyclerView.setAdapter(recyclerAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         Button btnShow = (Button) findViewById(R.id.button18);
         btnShow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getBrowserHist();
-                adapter.notifyDataSetChanged();
+                arrayList=getBrowserHist();
+                recyclerAdapter.notifyDataSetChanged();
             }
         });
         Button btnClear = (Button) findViewById(R.id.button14);
@@ -50,7 +51,9 @@ public class Privacy extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 arrayList.clear();
-                adapter.notifyDataSetChanged();
+                recyclerAdapter.notifyDataSetChanged();
+                dbHelper.del();
+
             }
         });
 
@@ -62,8 +65,8 @@ public class Privacy extends AppCompatActivity {
     public void mainPage(View v) {
         finish();
     }
-    public void getBrowserHist()  {
-
+    public ArrayList<String> getBrowserHist()  {
+        ArrayList<String> arrayList = new ArrayList<>();
             SQLiteDatabase db = dbHelper.getReadableDatabase();
             String selectString = "SELECT * FROM history_table";
             Cursor cursor = db.rawQuery(selectString, null);
@@ -74,6 +77,7 @@ public class Privacy extends AppCompatActivity {
             }
             cursor.close();
             db.close();
+            return arrayList;
         }
 
 }
