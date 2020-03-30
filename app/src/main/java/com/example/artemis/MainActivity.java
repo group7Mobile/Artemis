@@ -650,7 +650,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return flag;
     }
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    
     public String getTextFromWWW(String URLin) {
         String text=" ";
         //initiate the text to avoid stroage full
@@ -658,7 +658,7 @@ public class MainActivity extends AppCompatActivity {
             URL url = new URL(URLin);
             URLConnection connection = url.openConnection();
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            text = in.lines().collect(Collectors.joining());
+            text = in.readLine();
             in.close();
             return text;
 
