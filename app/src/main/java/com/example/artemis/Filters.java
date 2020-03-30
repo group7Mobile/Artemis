@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Filters extends AppCompatActivity {
-    private RecyclerAdapter recyclerAdapter;
+    private FilterAdapter filterAdapter;
     private EditText txtInput;
     private SharedPreferences fav;
     private FilterWordsDBhelper filterWords;
@@ -42,8 +42,8 @@ public class Filters extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recyclerView2);
         arrayList = new ArrayList<>();
         arrayList = getFilterWords();
-        recyclerAdapter = new RecyclerAdapter(this, arrayList);
-        recyclerView.setAdapter(recyclerAdapter);
+        filterAdapter = new FilterAdapter(this, arrayList);
+        recyclerView.setAdapter(filterAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         //constructor of adapter to store input item separately in list_item and put them in list_view
         Button btnAdd = (Button) findViewById(R.id.button2);
@@ -54,7 +54,7 @@ public class Filters extends AppCompatActivity {
                 String newItem = txtInput.getText().toString();
                 //every time add an item, add it in the top of stack by adding it to the 0 index of the arrayList
                 addTofilterDB(newItem.toLowerCase());
-                recyclerAdapter.notifyDataSetChanged();
+                filterAdapter.notifyDataSetChanged();
             }
         });
 
