@@ -53,9 +53,8 @@ public class Filters extends AppCompatActivity {
             public void onClick(View v) {
                 txtInput = (EditText) findViewById(R.id.editText18);
                 String newItem = txtInput.getText().toString();
-
                 //every time add an item, add it in the top of stack by adding it to the 0 index of the arrayList
-                addTofilterDB(newItem);
+                addTofilterDB(newItem.toLowerCase());
                 recyclerAdapter.notifyDataSetChanged();
             }
         });
