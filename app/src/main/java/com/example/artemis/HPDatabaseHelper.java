@@ -34,6 +34,11 @@ public class HPDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public void clearTable(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        onCreate(db);
+    }
+
     public boolean addData(String lk) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -57,19 +62,20 @@ public class HPDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT Url FROM " + TABLE_NAME;
         Cursor cursor = db.rawQuery(query, null);
-        ArrayList<String> strings= new ArrayList<>();
-        if (cursor.moveToFirst()){
-            do{
+        ArrayList<String> strings = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
                 String data = cursor.getString(cursor.getColumnIndex("Url"));
                 strings.add(data);
 
                 // do what ever you want here
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         cursor.close();
         try {
-            returnHP =  strings.get(0);
-        } catch (Exception e) {}
+            returnHP = strings.get(0);
+        } catch (Exception e) {
+        }
         return returnHP;
     }
 

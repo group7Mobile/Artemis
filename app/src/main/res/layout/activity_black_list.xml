@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.artemis.Blackist" >
+    tools:context="com.example.artemis.BlackList" >
 
     <ImageButton
         android:id="@+id/imageButton111"
@@ -42,7 +42,7 @@
         android:layout_marginTop="18dp"
         android:ems="10"
         android:hint="Title"
-        android:inputType="textPersonName"
+        android:inputType="textUri"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView171" />
 
