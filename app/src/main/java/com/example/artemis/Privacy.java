@@ -80,5 +80,4 @@ public class Privacy extends AppCompatActivity {
             return arrayList;
         }
 
-
 }
