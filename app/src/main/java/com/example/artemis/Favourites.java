@@ -154,4 +154,20 @@ public class Favourites extends AppCompatActivity {
     }
 }
 
+class PageAdapter extends CursorAdapter {
 
+
+    public PageAdapter(Context context, Cursor c) {
+        super(context, c);
+    }
+
+    @Override
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+        return null;
+    }
+
+    @Override
+    public void bindView(View view, Context context, Cursor cursor) {
+
+    }
+}
