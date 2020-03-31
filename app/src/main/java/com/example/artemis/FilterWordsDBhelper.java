@@ -3,7 +3,6 @@ package com.example.artemis;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.print.PrinterId;
 
 public class FilterWordsDBhelper extends SQLiteOpenHelper {
 

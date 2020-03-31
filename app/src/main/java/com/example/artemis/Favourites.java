@@ -11,9 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -64,13 +62,6 @@ public class Favourites extends AppCompatActivity {
             finish();
         }
     }
-
-/*    @Override
-    public void onBackPressed() {
-        Context context = getApplicationContext();
-        Intent intent = new Intent(context, Settings.class);
-        context.startActivity(intent);
-    }*/
 
     public void addFavourite(String ttl, String link) {
         //every time add an item, add it in the top of stack by adding it to the 0 index of the arrayList
@@ -129,20 +120,6 @@ public class Favourites extends AppCompatActivity {
     }
 
     public void mainPage(View v) {
-        /**
-         Bundle getterFav = getIntent().getExtras();
-         if (getterFav != null) {
-         int res = getterFav.getInt(Intent.EXTRA_TEXT);
-         if (res == 1) {
-         finish();
-         } else {
-         if (res == 2) {
-         Intent goMainPage1 = new Intent(this, Settings.class);
-         startActivity(goMainPage1);
-         }
-         }
-         }
-         **/
         finish();
     }
 }

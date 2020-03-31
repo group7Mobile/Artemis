@@ -1,17 +1,13 @@
 package com.example.artemis;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CursorAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -67,13 +63,6 @@ public class BlackList extends AppCompatActivity {
             finish();
         }
     }
-
-/*    @Override
-    public void onBackPressed() {
-        Context context = getApplicationContext();
-        Intent intent = new Intent(context, Settings.class);
-        context.startActivity(intent);
-    }*/
 
     public void addFavourite(String ttl, String link) {
         //every time add an item, add it in the top of stack by adding it to the 0 index of the arrayList

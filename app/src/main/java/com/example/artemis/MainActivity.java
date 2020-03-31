@@ -4,10 +4,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -40,16 +36,13 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -186,17 +179,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        /////////////////////////////
-/*        Bundle getFromFavs = getIntent().getExtras();
-        if (getFromFavs != null) {
-            if (!Objects.equals(getFromFavs.getString(Intent.EXTRA_RETURN_RESULT), "")) {
-                tempUrl = getFromFavs.getString(Intent.EXTRA_RETURN_RESULT);
-            } else {
-                tempUrl = retrieveFromCurrentStateDB();
-            }
-            addressBar.setText(tempUrl);
-            go(null);
-        }*/
         //Check if a favourite was clicked and if so, go to favourite:
         ProfanityFilter.loadStaticList();
 
@@ -326,7 +308,6 @@ public class MainActivity extends AppCompatActivity {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
             viewer.loadUrl(tempUrl);
-            // new GetText().execute();
         } else {
             viewer.loadUrl(tempUrl);
             xrossInvisible(null);
@@ -400,18 +381,6 @@ public class MainActivity extends AppCompatActivity {
                         addressBar.setText(viewer.getUrl());
                     }
                 }
-                /**
-                 if (!checkPage(text)) {
-                 viewer.loadUrl("https://i.ibb.co/ypmZQHk/filtered-Dark.jpg");
-                 viewer.setWebViewClient(new WebViewClient() {
-                @Override
-                public void onPageFinished(WebView view2, String url) {
-                super.onPageFinished(view2, url);
-                viewer.stopLoading();
-                }
-                });
-                 }
-                 **/
             }
         });
     }
@@ -719,13 +688,6 @@ public class MainActivity extends AppCompatActivity {
     public void goToFavourite() {
         if (getIntent().hasExtra("favourites")) {
             favouriteClicked = getIntent().getStringExtra("favourites");
-
-            /*if (favouriteClicked.startsWith("www")) {
-                favouriteClicked = "https://" + favouriteClicked;
-            } else if (!favouriteClicked.startsWith("http")) {
-                favouriteClicked = "https://www." + favouriteClicked;
-            }*/
-
             FavDatabaseHelper helper = new FavDatabaseHelper(this);
             String link = helper.retrieveLinkByTitle(favouriteClicked);
 
@@ -753,9 +715,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPostExecute(Void avoid) {
-            System.out.println(words);
-            for(int i = 0; i < filterWordsList.size(); i++){
-                System.out.println(filterWordsList.get(i));
+            for (int i = 0; i < filterWordsList.size(); i++) {
                 if (words != null) {
                     if (words.toLowerCase().contains(filterWordsList.get(i).toLowerCase()) ||
                             tempUrl.toLowerCase().contains(filterWordsList.get(i).toLowerCase())) {
@@ -766,7 +726,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-            //proceedGo();
             if (!blockCondition) {
                 if (isBlocked(tempUrl)) {
                     viewer.loadUrl("https://i.ibb.co/vvFm7L5/not-Allowed-Dark.jpg");
@@ -790,12 +749,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else {
                 blockCondition = false;
-            }
-            System.out.println(tempHistory.toString());
-            if (blockCondition) {
-                System.out.println("true");
-            } else {
-                System.out.println("false");
             }
         }
     }

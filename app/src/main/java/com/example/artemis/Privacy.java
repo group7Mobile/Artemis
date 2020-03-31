@@ -3,20 +3,13 @@ package com.example.artemis;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.provider.Browser;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-
 import android.widget.Button;
 import java.util.ArrayList;
-import java.util.Observable;
 
 public class Privacy extends AppCompatActivity {
     private RecyclerAdapter recyclerAdapter;

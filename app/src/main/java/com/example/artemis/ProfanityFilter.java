@@ -91,12 +91,5 @@ public class ProfanityFilter {
         return badWordsFound(input).size() > 0 ? true : false;
     }
 
-/*
-    public static void main(String[] args) {
-        ProfanityFilter.load();
-        System.out.println(ProfanityFilter.isBadString("porn"));
-    }
-*/
-
 
 }
