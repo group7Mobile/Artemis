@@ -47,5 +47,20 @@ public class AccountDatabaseHelper extends SQLiteOpenHelper {
         if(cursor.getCount()>0) return true;
         else return false;
     }
+
+    public String getEmail() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String select = "SELECT * FROM user;";
+        String retS = "";
+        Cursor cursor = db.rawQuery(select, null);
+        if (cursor.moveToFirst()) {
+            do {
+                retS =  cursor.getString(cursor.getColumnIndex("email"));
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        cursor.close();
+        return retS;
+    }
 }
 

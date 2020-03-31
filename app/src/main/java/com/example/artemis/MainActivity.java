@@ -19,7 +19,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
     HPDatabaseHelper hpDatabaseHelper;
     BlackListDatabaseHelper blackListDatabaseHelper;
     CurrentStateDatabaseHelper currentStateDatabaseHelper;
+    AccountEmailHolderDatabaseHelper accountEmailHolderDatabaseHelper;
+    AlertSettingsDatabaseHelper alertSettingsDatabaseHelper;
     SwitchDatabaseHelper switchDatabaseHelper;
     private long backPressedTime;
     HistoryDBHelper historyDBHelper;
@@ -102,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
         hpDatabaseHelper = new HPDatabaseHelper(this);
         currentStateDatabaseHelper = new CurrentStateDatabaseHelper(this);
         historyDBHelper = new HistoryDBHelper(this);
+        accountEmailHolderDatabaseHelper = new AccountEmailHolderDatabaseHelper(this);
+        alertSettingsDatabaseHelper = new AlertSettingsDatabaseHelper(this);
         filterWords = new FilterWordsDBhelper(this);
         filterWordsList=new ArrayList<>();
         goToFavourite();
@@ -317,6 +321,12 @@ public class MainActivity extends AppCompatActivity {
                     super.onPageStarted(view, url, favicon);
                     dialogUrl = url;
                     if (isBlocked(url)) {
+                        if (getAlertOptions()) {
+                            String email = getEmailFromDB();
+                            String ttl = viewer.getTitle();
+                            String lk = viewer.getUrl();
+                            notification(email, ttl, lk);
+                        }
                         viewer.loadUrl("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg");
                     }
                 }
@@ -728,12 +738,24 @@ public class MainActivity extends AppCompatActivity {
             }
             if (!blockCondition) {
                 if (isBlocked(tempUrl)) {
+                    if (getAlertOptions()) {
+                        String email = getEmailFromDB();
+                        String ttl = viewer.getTitle();
+                        String lk = viewer.getUrl();
+                        notification(email, ttl, lk);
+                    }
                     viewer.loadUrl("https://i.ibb.co/vvFm7L5/not-Allowed-Dark.jpg");
                     hdr.setText(R.string.not_allowed);
                     addressBar.getText().clear();
                     blockCondition = true;
                 } else {
                     if (!resultOfCkPg) {
+                        if (getAlertOptions()) {
+                            String email = getEmailFromDB();
+                            String ttl = viewer.getTitle();
+                            String lk = viewer.getUrl();
+                            notification(email, ttl, lk);
+                        }
                         viewer.loadUrl("https://i.ibb.co/ypmZQHk/filtered-Dark.jpg");
                         hdr.setText(R.string.filtered);
                         addressBar.getText().clear();
@@ -770,5 +792,51 @@ public class MainActivity extends AppCompatActivity {
         } else {
             filterActivated = true;
         }
+    }
+
+    public void notification(String email, String title, String url) {
+       try {
+           GMailSender sender = new GMailSender("artemisbrowser@gmail.com",
+                   "Artemis_group7");
+           sender.sendMail("Unauthorised Activity on " + title,url + "" +
+                           "   was attempted to be reached!",
+                   "artemisbrowser@gmail.com" , email);
+       } catch (Exception e)  {
+           Log.e("SendMail", e.getMessage(), e);
+       }
+    }
+
+    public boolean getAlertOptions() {
+        SQLiteDatabase db = alertSettingsDatabaseHelper.getReadableDatabase();
+        String select = "SELECT * FROM alert_table;";
+        int i = 0;
+        Cursor cursor = db.rawQuery(select, null);
+        if (cursor.moveToFirst()) {
+            do {
+                i = cursor.getInt(cursor.getColumnIndex("isChecked"));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        if (i == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public String getEmailFromDB() {
+        SQLiteDatabase db = accountEmailHolderDatabaseHelper.getReadableDatabase();
+        String ret = "";
+        String select = "SELECT * FROM email_table;";
+        Cursor cursor = db.rawQuery(select, null);
+        if (cursor.moveToFirst()) {
+            do {
+                ret = cursor.getString(cursor.getColumnIndex("email"));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return ret;
     }
 }
