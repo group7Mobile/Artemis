@@ -36,7 +36,7 @@
     <EditText
         android:id="@+id/editText18"
         android:layout_width="wrap_content"
-        android:layout_height="34dp"
+        android:layout_height="55dp"
         android:layout_marginStart="36dp"
         android:layout_marginLeft="20dp"
         android:ems="10"
@@ -51,7 +51,7 @@
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
-        android:layout_height="32dp"
+        android:layout_height="45dp"
         android:layout_marginStart="92dp"
         android:layout_marginLeft="92dp"
         android:text="add"
@@ -83,5 +83,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView14"
         app:layout_constraintVertical_bias="0.087" />
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Filters on/off"
+        android:onClick="ifUpdated"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView13" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

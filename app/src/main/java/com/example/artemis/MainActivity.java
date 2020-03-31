@@ -19,9 +19,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -39,6 +41,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -54,6 +59,10 @@ public class MainActivity extends AppCompatActivity {
     private String dialogUrl;
     private String titleFromWebView;
     private String home;
+    private boolean filterActivated;
+    private ArrayList<String> tempHistory;
+    private boolean resultOfCkPg;
+    private boolean blockCondition;
     private TextView xross;
     private TextView hdr;
     private FavDialog favDialog;
@@ -66,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     HPDatabaseHelper hpDatabaseHelper;
     BlackListDatabaseHelper blackListDatabaseHelper;
     CurrentStateDatabaseHelper currentStateDatabaseHelper;
+    SwitchDatabaseHelper switchDatabaseHelper;
     private long backPressedTime;
     HistoryDBHelper historyDBHelper;
     static final String savedUrl = "url";
@@ -79,23 +89,31 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         addressBar = findViewById(R.id.addressBar);
+        tempHistory = new ArrayList<>();
         viewer = findViewById(R.id.viewer);
         xross = findViewById(R.id.clear);
         hdr = findViewById(R.id.textView7);
         pg = findViewById(R.id.progressBar);
         pg.setVisibility(ProgressBar.GONE);
+        resultOfCkPg = true;
         favDialog = new FavDialog();
         dialogUrl = "";
         blackListDatabaseHelper = new BlackListDatabaseHelper(this);
         blockedList = new ArrayList<>();
         blockedList = blackListDatabaseHelper.retrieveLinksFromDatabase();
+        switchDatabaseHelper = new SwitchDatabaseHelper(this);
+        filterActivated = false;
+        getFromSwitchDB();
         xrossInvisible(null);
         favDatabaseHelper = new FavDatabaseHelper(this);
         hpDatabaseHelper = new HPDatabaseHelper(this);
         currentStateDatabaseHelper = new CurrentStateDatabaseHelper(this);
         historyDBHelper = new HistoryDBHelper(this);
         filterWords = new FilterWordsDBhelper(this);
-        filterWordsList=new ArrayList<String>();
+        filterWordsList=new ArrayList<>();
+        goToFavourite();
+        getBlockedSites();
+        getFilterWords();
         viewer.setWebViewClient(new WebViewClient());
         Bundle getStateWebPage = getIntent().getExtras();
         if (getStateWebPage != null && getStateWebPage.getString(Intent.EXTRA_TEXT) != null) {
@@ -113,9 +131,36 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            public void onReceivedTitle (WebView view, String title) {
-                hdr.setText(title);
-                addressBar.setText(viewer.getUrl());
+            public void onReceivedTitle (final WebView view, String title) {
+                if (viewer.getUrl().equals("https://i.ibb.co/vvFm7L5/not-Allowed-Dark.jpg")) {
+                    addressBar.getText().clear();
+                    hdr.setText(R.string.not_allowed);
+                } else {
+                    if (viewer.getUrl().equals( "https://i.ibb.co/ypmZQHk/filtered-Dark.jpg")) {
+                        addressBar.getText().clear();
+                        hdr.setText(R.string.filtered);
+                    } else {
+                        hdr.setText(title);
+                        addressBar.setText(viewer.getUrl());
+                    }
+                }
+                if (filterActivated) {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            tempUrl = viewer.getUrl();
+                            if (tempHistory.size() == 0) {
+                                tempHistory.add(viewer.getUrl());
+                            } else {
+                                if (!tempHistory.get(tempHistory.size() - 1).equals(viewer.getUrl())) {
+                                    tempHistory.add(viewer.getUrl());
+                                }
+                            }
+                            new GetText().execute();
+                        }
+                    }, 300);
+                }
             }
         });
         viewer.getSettings().setUseWideViewPort(true);
@@ -155,9 +200,6 @@ public class MainActivity extends AppCompatActivity {
             go(null);
         }*/
         //Check if a favourite was clicked and if so, go to favourite:
-        goToFavourite();
-        getBlockedSites();
-        getFilterWords();
         ProfanityFilter.loadStaticList();
 
     }
@@ -201,7 +243,6 @@ public class MainActivity extends AppCompatActivity {
     public void openDialog() {
         favDialog.setUrl(dialogUrl);
         favDialog.setTitle(hdr.getText().toString());
-        titleFromWebView = hdr.getText().toString();
         favDialog.show(getSupportFragmentManager(), "fav dialog");
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -263,9 +304,11 @@ public class MainActivity extends AppCompatActivity {
     public void go(final View v) {
         getBlockedSites();
         getFilterWords();
-        String url = addressBar.getText().toString();
+        blockCondition = false;
+        String aurl = addressBar.getText().toString();
+        filterUrl(aurl);
         if (v != null) {
-            if (ProfanityFilter.isBadString(url)) {
+            if (ProfanityFilter.isBadString(aurl)) {
 
                 int duration = Toast.LENGTH_LONG;
 
@@ -275,13 +318,18 @@ public class MainActivity extends AppCompatActivity {
                 addressBar.setText("");
                 return;
             }
-            historyDBHelper.addData(url);
-            filterUrl(url);
+            historyDBHelper.addData(aurl);
+            viewer.loadUrl(tempUrl);
         }
-        String URLin= url;
-        String text=getTextFromWWW(URLin);
-        getFilterWords();
-        if(checkPage(text,filterWordsList)){
+        if (filterActivated) {
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+            viewer.loadUrl(tempUrl);
+            // new GetText().execute();
+        } else {
             viewer.loadUrl(tempUrl);
             xrossInvisible(null);
             viewer.setWebViewClient(new WebViewClient() {
@@ -313,62 +361,90 @@ public class MainActivity extends AppCompatActivity {
                     inm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             }
-        }else hdr.setText(R.string.not_allowed);
+        }
+    }
 
+    public void proceedGo() {
+        xrossInvisible(null);
+        viewer.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                dialogUrl = url;
+                if (isBlocked(url)) {
+                    viewer.loadUrl("https://i.ibb.co/vvFm7L5/not-Allowed-Dark.jpg");
+                } else {
+                    if (!resultOfCkPg) {
+                        viewer.loadUrl("https://i.ibb.co/ypmZQHk/filtered-Dark.jpg");
+                        viewer.setWebViewClient(new WebViewClient() {
+                            @Override
+                            public void onPageFinished(WebView view1, String url) {
+                                super.onPageFinished(view1, url);
+                                viewer.stopLoading();
+                            }
+                        });
+                    }
+                }
+            }
 
+            @Override
+            public void onPageFinished(WebView view1, String url) {
+                super.onPageFinished(view1, url);
+                if (viewer.getUrl().equals("https://i.ibb.co/vvFm7L5/not-Allowed-Dark.jpg")) {
+                    hdr.setText(R.string.not_allowed);
+                    addressBar.getText().clear();
+                } else {
+                    if (viewer.getUrl().equals("https://i.ibb.co/ypmZQHk/filtered-Dark.jpg")) {
+                        hdr.setText(R.string.filtered);
+                        addressBar.getText().clear();
+                    } else {
+                        hdr.setText(viewer.getTitle());
+                        addressBar.setText(viewer.getUrl());
+                    }
+                }
+                /**
+                 if (!checkPage(text)) {
+                 viewer.loadUrl("https://i.ibb.co/ypmZQHk/filtered-Dark.jpg");
+                 viewer.setWebViewClient(new WebViewClient() {
+                @Override
+                public void onPageFinished(WebView view2, String url) {
+                super.onPageFinished(view2, url);
+                viewer.stopLoading();
+                }
+                });
+                 }
+                 **/
+            }
+        });
     }
 
     public void refresh(View v) {
         getBlockedSites();
         getFilterWords();
         viewer.reload();
-        viewer.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                if (isBlocked(url)) {
-                    viewer.loadUrl("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg");
-                }
-            }
-            @Override
-            public void onPageFinished(WebView view1, String url) {
-                super.onPageFinished(view1, url);
-                if (!viewer.getUrl().equals("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg")) {
-                    hdr.setText(viewer.getTitle());
-                    addressBar.setText(viewer.getUrl());
-                } else {
-                    hdr.setText(R.string.not_allowed);
-                }
-            }
-        });
         xrossInvisible(null);
     }
 
     public void gobackPage(View v) {
         getBlockedSites();
         getFilterWords();
-        if (viewer.canGoBack()) {
-            viewer.goBack();
-            viewer.setWebViewClient(new WebViewClient() {
-                @Override
-                public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                    super.onPageStarted(view, url, favicon);
-                    if (isBlocked(url)) {
-                        viewer.loadUrl("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg");
-                    }
+        if (filterActivated) {
+            if (tempHistory.get(tempHistory.size()-1).equals
+                    ("https://i.ibb.co/vvFm7L5/not-Allowed-Dark.jpg") ||
+                    tempHistory.get(tempHistory.size()-1).equals(
+                            "https://i.ibb.co/ypmZQHk/filtered-Dark.jpg")) {
+                viewer.loadUrl(tempHistory.get(tempHistory.size() - 3));
+                tempUrl = "";
+            } else {
+                if (viewer.canGoBack()) {
+                    viewer.goBack();
+                    xrossInvisible(null);
                 }
-                @Override
-                public void onPageFinished(WebView view1, String url) {
-                    super.onPageFinished(view1, url);
-                    if (!viewer.getUrl().equals("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg")) {
-                        hdr.setText(viewer.getTitle());
-                        addressBar.setText(viewer.getUrl());
-                    } else {
-                        hdr.setText(R.string.not_allowed);
-                    }
-                }
-            });
-            xrossInvisible(null);
+            }
+        } else {
+            if (viewer.canGoBack()) {
+                viewer.goBack();
+            }
         }
     }
 
@@ -377,25 +453,6 @@ public class MainActivity extends AppCompatActivity {
         getFilterWords();
         if (viewer.canGoForward()) {
             viewer.goForward();
-            viewer.setWebViewClient(new WebViewClient() {
-                @Override
-                public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                    super.onPageStarted(view, url, favicon);
-                    if (isBlocked(url)) {
-                        viewer.loadUrl("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg");
-                    }
-                }
-                @Override
-                public void onPageFinished(WebView view1, String url) {
-                    super.onPageFinished(view1, url);
-                    if (!viewer.getUrl().equals("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg")) {
-                        hdr.setText(viewer.getTitle());
-                        addressBar.setText(viewer.getUrl());
-                    } else {
-                        hdr.setText(R.string.not_allowed);
-                    }
-                }
-            });
             xrossInvisible(null);
         }
     }
@@ -417,25 +474,6 @@ public class MainActivity extends AppCompatActivity {
         }
         go(null);
         xrossInvisible(null);
-        viewer.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                if (isBlocked(url)) {
-                    viewer.loadUrl("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg");
-                }
-            }
-            @Override
-            public void onPageFinished(WebView view1, String url) {
-                super.onPageFinished(view1, url);
-                if (!viewer.getUrl().equals("https://i.ibb.co/ZL7FtBd/Webp-net-resizeimage.jpg")) {
-                    hdr.setText(viewer.getTitle());
-                    addressBar.setText(viewer.getUrl());
-                } else {
-                    hdr.setText(R.string.not_allowed);
-                }
-            }
-        });
     }
 
     public void cancelpageLoad(View v) {
@@ -665,15 +703,16 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-    public boolean checkPage(String text, ArrayList<String> filterWordsList){
-        filterWordsList=this.filterWordsList;
-        for(int i=0;i<filterWordsList.size();i++){
-            String a = (String) filterWordsList.get(i);
-            text=text.toLowerCase();
-            if(text.contains(a)){
-                return false;
+    public boolean checkPage(String text){
+        resultOfCkPg = true;
+        for(int i = 0; i < filterWordsList.size(); i++){
+            if (text.toLowerCase().replaceAll("\\s+", "").contains(filterWordsList.get(i).toLowerCase()) ||
+                    tempUrl.toLowerCase().contains(filterWordsList.get(i).toLowerCase().replaceAll("\\s+", ""))) {
+                resultOfCkPg = false;
+                break;
             }
-        }return true;
+        }
+        return resultOfCkPg;
     }
 
     /*
@@ -696,6 +735,89 @@ public class MainActivity extends AppCompatActivity {
                 tempUrl = link;
                 go(null);
             }
+        }
+    }
+
+    public class GetText extends AsyncTask<Void, Void, Void> {
+
+        String words;
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Document doc = Jsoup.connect(tempUrl).get();
+                words = doc.text();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        public void onPostExecute(Void avoid) {
+            System.out.println(words);
+            for(int i = 0; i < filterWordsList.size(); i++){
+                System.out.println(filterWordsList.get(i));
+                if (words != null) {
+                    if (words.toLowerCase().contains(filterWordsList.get(i).toLowerCase()) ||
+                            tempUrl.toLowerCase().contains(filterWordsList.get(i).toLowerCase())) {
+                        resultOfCkPg = false;
+                        break;
+                    } else {
+                        resultOfCkPg = true;
+                    }
+                }
+            }
+            //proceedGo();
+            if (!blockCondition) {
+                if (isBlocked(tempUrl)) {
+                    viewer.loadUrl("https://i.ibb.co/vvFm7L5/not-Allowed-Dark.jpg");
+                    hdr.setText(R.string.not_allowed);
+                    addressBar.getText().clear();
+                    blockCondition = true;
+                } else {
+                    if (!resultOfCkPg) {
+                        viewer.loadUrl("https://i.ibb.co/ypmZQHk/filtered-Dark.jpg");
+                        hdr.setText(R.string.filtered);
+                        addressBar.getText().clear();
+                        blockCondition = true;
+                        viewer.setWebViewClient(new WebViewClient() {
+                            @Override
+                            public void onPageFinished(WebView view1, String url) {
+                                super.onPageFinished(view1, url);
+                                viewer.stopLoading();
+                            }
+                        });
+                    }
+                }
+            } else {
+                blockCondition = false;
+            }
+            System.out.println(tempHistory.toString());
+            if (blockCondition) {
+                System.out.println("true");
+            } else {
+                System.out.println("false");
+            }
+        }
+    }
+
+    public void getFromSwitchDB() {
+        String i = "";
+        SQLiteDatabase db = switchDatabaseHelper.getReadableDatabase();
+        String select = "SELECT * FROM swt_table";
+        Cursor cursor = db.rawQuery(select, null);
+        if (cursor.moveToFirst()) {
+            do {
+                i = cursor.getString(cursor.getColumnIndex("sw"));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        if (i.equals("f")) {
+            filterActivated = false;
+        } else {
+            filterActivated = true;
         }
     }
 }

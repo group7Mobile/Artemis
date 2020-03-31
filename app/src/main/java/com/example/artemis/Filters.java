@@ -9,37 +9,35 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Switch;
-import android.widget.TextView;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Filters extends AppCompatActivity {
     private FilterAdapter filterAdapter;
     private EditText txtInput;
     private SharedPreferences fav;
     private FilterWordsDBhelper filterWords;
+    private Switch aSwitch;
+    private boolean isUpdated;
     public ArrayList<String> arrayList;
     String wordId= null;
     public boolean status;
+    SwitchDatabaseHelper switchDatabaseHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filters);
         filterWords = new FilterWordsDBhelper(this);
+        isUpdated = false;
         RecyclerView recyclerView = findViewById(R.id.recyclerView2);
+        switchDatabaseHelper = new SwitchDatabaseHelper(this);
+        aSwitch = findViewById(R.id.switch1);
         arrayList = new ArrayList<>();
         arrayList = getFilterWords();
         filterAdapter = new FilterAdapter(this, arrayList);
@@ -57,11 +55,18 @@ public class Filters extends AppCompatActivity {
                 filterAdapter.notifyDataSetChanged();
             }
         });
-
+        getFromSwitchDB();
     }
 
     public void mainPage(View v) {
-        finish();
+        if (isUpdated) {
+            Intent goToMainPage = new Intent(Filters.this, MainActivity.class);
+            goToMainPage.putExtra(Intent.EXTRA_TEXT, "set");
+            startActivity(goToMainPage);
+            pushSwitchDB();
+        } else {
+            finish();
+        }
     }
     public ArrayList<String> getArrayList(){
         return arrayList;
@@ -93,4 +98,46 @@ public class Filters extends AppCompatActivity {
         db.close();
         return arrayList;
     }
+
+    public void pushSwitchDB() {
+        String i = "";
+        if (aSwitch.isChecked()) {
+            i = "t";
+        } else {
+            i = "f";
+        }
+        SQLiteDatabase db = switchDatabaseHelper.getWritableDatabase();
+        switchDatabaseHelper.clearTable(db);
+        ContentValues values = new ContentValues();
+        values.put("sw", i);
+        db.insert("swt_table", null, values);
+        db.close();
+    }
+
+    public void getFromSwitchDB() {
+        String i = "";
+        SQLiteDatabase db = switchDatabaseHelper.getReadableDatabase();
+        String select = "SELECT * FROM swt_table";
+        Cursor cursor = db.rawQuery(select, null);
+        if (cursor.moveToFirst()) {
+            do {
+                i = cursor.getString(cursor.getColumnIndex("sw"));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        if (i.equals("f")) {
+            aSwitch.setChecked(false);
+        } else {
+            if (i.equals("t")) {
+                aSwitch.setChecked(true);
+            }
+        }
+    }
+
+    public void ifUpdated(View v) {
+        isUpdated = true;
+        System.out.println("clicked");
+    }
+
 }

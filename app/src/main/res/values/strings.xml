@@ -10,4 +10,5 @@
     <string name="phone">Phone</string>
     <string name="not_allowed">Website is Not Allowed</string>
     <string name="goFavs">Go to Favorites</string>
+    <string name="filtered">Page contains filtered content</string>
 </resources>
