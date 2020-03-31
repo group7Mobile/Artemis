@@ -62,6 +62,7 @@ public class Filters extends AppCompatActivity {
         if (isUpdated) {
             Intent goToMainPage = new Intent(Filters.this, MainActivity.class);
             goToMainPage.putExtra(Intent.EXTRA_TEXT, "set");
+            goToMainPage.putExtra(Intent.EXTRA_TITLE, "set");
             startActivity(goToMainPage);
             pushSwitchDB();
         } else {

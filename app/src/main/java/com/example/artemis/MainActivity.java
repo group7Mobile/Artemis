@@ -117,7 +117,11 @@ public class MainActivity extends AppCompatActivity {
         viewer.setWebViewClient(new WebViewClient());
         Bundle getStateWebPage = getIntent().getExtras();
         if (getStateWebPage != null && getStateWebPage.getString(Intent.EXTRA_TEXT) != null) {
-            tempUrl = retrieveFromCurrentStateDB();
+            if (getStateWebPage.getString(Intent.EXTRA_TITLE) != null) {
+                tempUrl = "https://www.google.com";
+            } else {
+                tempUrl = retrieveFromCurrentStateDB();
+            }
             go(null);
         }
         viewer.setWebChromeClient(new ChromeClient() {
@@ -145,21 +149,15 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 if (filterActivated) {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            tempUrl = viewer.getUrl();
-                            if (tempHistory.size() == 0) {
-                                tempHistory.add(viewer.getUrl());
-                            } else {
-                                if (!tempHistory.get(tempHistory.size() - 1).equals(viewer.getUrl())) {
-                                    tempHistory.add(viewer.getUrl());
-                                }
-                            }
-                            new GetText().execute();
+                    tempUrl = viewer.getUrl();
+                    if (tempHistory.size() == 0) {
+                        tempHistory.add(viewer.getUrl());
+                    } else {
+                        if (!tempHistory.get(tempHistory.size() - 1).equals(viewer.getUrl())) {
+                            tempHistory.add(viewer.getUrl());
                         }
-                    }, 300);
+                    }
+                    new GetText().execute();
                 }
             }
         });
@@ -285,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
         getFilterWords();
         SharedPreferences settings = getSharedPreferences("PREFS", 0);
         password = settings.getString("password", "");
-        addToCurrentStateDB(viewer.getUrl());
+        addToCurrentStateDB(addressBar.getText().toString());
         if(password.equals("")){
             // If there is no password
             Intent goSettings = new Intent(this, Passwords.class);
@@ -306,7 +304,6 @@ public class MainActivity extends AppCompatActivity {
         getFilterWords();
         blockCondition = false;
         String aurl = addressBar.getText().toString();
-        filterUrl(aurl);
         if (v != null) {
             if (ProfanityFilter.isBadString(aurl)) {
 
@@ -318,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
                 addressBar.setText("");
                 return;
             }
+            filterUrl(aurl);
             historyDBHelper.addData(aurl);
             viewer.loadUrl(tempUrl);
         }
